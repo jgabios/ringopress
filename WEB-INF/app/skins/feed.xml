@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title><% title %></title>
+	<atom:link href="http://www.jlin.ro/feed" rel="self" type="application/rss+xml" />
+	<link>http://www.jlin.ro</link>
+	<description>javascript adventures</description>
+	<lastBuildDate><% lastBuildDate %></lastBuildDate>
+
+	<generator>ringojs custom js code</generator>
+	<language>en</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+        <% for post in <% posts %> render 'xmlpostskin' %>
+</channel>
+</rss>
+
+<% subskin 'xmlpostskin'%>
+<item>
+    <title><% post.title %></title>
+    <link>http://www.jlin.ro/post?postid=<% post._id %></link>
+    <guid>http://www.jlin.ro/post?postid=<% post._id %></guid>
+    <comments>http://www.jlin.ro/post?postid=<% post._id %>#comments</comments>
+    <description><% post.getShortDescription() %></description>
+    </item>

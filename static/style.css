@@ -1,0 +1,118 @@
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+h3 {
+    margin: 0;
+    padding: 0;
+    color: #000080;
+}
+
+h1 {
+    margin: 20px 0px 0px 0px;
+    padding: 0;
+    color: #000080;
+}
+
+h2 {
+    font-size: 18px;
+}
+
+#container {
+    margin: 10px auto 0px auto;
+    width: 60%;
+    background-color: #E2F4FE;
+    padding: 0px;
+    border: 2px solid #89C2DF;
+    color: #0000ee;
+}
+
+#header {
+    background: #E2F4FE;
+    margin-bottom: 10px;
+    padding: 10px 5px;
+    text-align: center;
+}
+
+#menu {
+    float: right;
+    text-align: right;
+}
+
+#menu ul {
+    list-style: none;
+}
+
+#menu ul li {
+    margin: 0px 5px 0px 0px;
+    border-bottom: 1px solid #89C2DF;
+}
+
+#content {
+    margin: 10px;
+    padding: 10px 45px;
+    text-align: center;
+}
+
+.post {
+    text-align: left;
+    padding-bottom: 5px;
+    color: #717171;
+    border-bottom: 1px solid #333333;
+    margin: 20px 0px 5px 0px;
+}
+
+.post a {
+    color: #333333;
+    text-decoration: none;
+}
+
+.post a:hover {
+    color: #0066CC;
+}
+
+/*
+.post hr {
+    width: 50%;
+    height: 1px;
+border-style: none;
+color: #89C2DF;
+background-color: #89C2DF;
+}
+*/
+#post {
+    text-align: left;
+}
+.clearer {
+    clear: both;
+}
+
+.menulink {
+    text-decoration: none;
+    color: #06C;
+}
+
+.menulink:hover {
+    color: #09f;
+}
+
+.formFirstColumn {
+    float: left;
+    text-align: right;
+    width: 15%;
+    margin: 5px;
+}
+
+.formSecondColumn {
+    float: left;
+    text-align: left;
+    width: 40%;
+    margin: 5px;
+}
+
+#comments {
+    text-align: left;
+    padding: 14px 0px 1px 10px;
+    border-top: 1px solid #555555;
+}

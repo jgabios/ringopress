@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title><% title %></title>
+<link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+    <div id="container">
+        <div id="header">
+            <div id="menu">
+                <ul>
+                    <li><a href="/" class="menulink">Main page</a></li>
+                    <li><a href="/feed" class="menulink">RSS</a></li>
+                    <li><a href="/contact" class="menulink">contact</a></li>
+                </ul>
+            </div>
+            <h1>Munteanu Gabriel</h1>
+            <h3>javascripter</h3>
+            <div class="clearer"> </div>
+        </div>
+        <div id="content">
+            <% render content %>
+        </div>
+    </div>
+</body>
+</html>
+
+<% subskin content %>
+Overwrite this subskin to add content.

@@ -1,0 +1,42 @@
+syntax on
+set nocp	" Use vim defaults, not vi ones
+set bs=2	" Smart backspace in insert mode
+set dg		" Use digraphs
+set hls		" Highlight search pattern matches
+set noincsearch " ...but no incremental search
+set shm=a	" Use the shortest messages
+set sc		" Show commands being typed
+set sm		" Show matching brackets when typing
+set su+=.class	" Skip Java class files for filename completion
+set su-=.h	" but not C header files
+set tw=0	" No automatic line wrap
+set ruler
+set viminfo='20,\"50 " read/write a .viminfo file, don't store more
+                     " than 50 lines of registers
+set com-=:%
+
+set uc=0 " this is for no swap backup file
+set showmatch
+set nobackup
+set showmode
+set undolevels=1000
+set noerrorbells
+set visualbell
+set paste
+set cursorline
+set mouse=c
+set number
+
+set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [ASCII=\%03.3b]\ [HEX=\%02.2B]\ [POS=%04l,%04v][%p%%]\ [LEN=%L]
+set laststatus=2
+
+if has("autocmd")
+  " In text files, always limit the width of text to 78 characters
+  autocmd BufRead *.txt set tw=78
+  " When editing a file, always jump to the last cursor position
+  autocmd BufReadPost *
+  \ if line("'\"") > 0 && line ("'\"") <= line("$") |
+  \   exe "normal g'\"" |
+  \ endif
+endif
+

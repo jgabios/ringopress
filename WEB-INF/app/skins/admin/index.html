@@ -1,0 +1,10 @@
+<% extends ./base.html %>
+
+<% subskin content %>
+<% for post in <% posts %> render 'postskin' %>
+
+<% subskin 'postskin' %>
+<div class="post">
+    <hr noshade align="left"/>
+    <a href="/post?postid=<% post._id %>"><% post.title %></a> [<% post.getCommentsCount() %> comments] | <a href="/admin/?id=<% post._id %>">delete</a>
+</div>

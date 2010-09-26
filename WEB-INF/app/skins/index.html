@@ -1,0 +1,13 @@
+<% extends ./base.html %>
+
+<% subskin content %>
+<% for post in <% posts %> render 'postskin' %>
+
+<% subskin 'postskin' %>
+<div class="post">
+    <!--<hr noshade align="left"/>-->
+   <h2><a href="/post?postid=<% post._id %>"><% post.title %></a> [<% post.getCommentsCount() %> comments]</h2>
+   <div>
+    <% post.text %>
+   </div>
+</div>
