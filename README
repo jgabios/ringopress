@@ -1,0 +1,19 @@
+ringojs blog platform for google java app engine [GAE]
+
+how to install a blog on GAE in 3 easy steps:
+1. get the ringojs code from github from here: http://github.com/jgabios/ringopress
+2./optional /APPENGINE_PATH/bin/dev_appserver.sh /PATH/TO/jgabios-ringopress-XXXXXX/ [the folder downloaded from github with the code]
+this step is to test it locally and modify it to please your heart,
+especially the skin here: /PATH/TO/jgabios-ringopress-XXXXXX/WEB-INF/app/skins/* and /PATH/TO/jgabios-ringopress-XXXXXX/static/style.css .
+3. /APPENGINE_PATH/bin/appcfg.sh update /PATH/TO/jgabios-ringopress-XXXXXX/
+
+TODO:
+- comment management section.
+
+features:
+- you can manage your blog from here: /admin/ in a secure manner, that is only the google owner of the app can do it with
+his google account, or whoever he gives that right to in the appengine admin interface.
+- for now you can only create/edit/delete posts.
+- you have RSS feed.
+- people can comment on your posts, no captcha for now, anybody can spam your comment section.
+
