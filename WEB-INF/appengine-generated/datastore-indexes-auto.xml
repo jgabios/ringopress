@@ -1,4 +1,11 @@
-<!-- Indices written at Sun, 26 Sep 2010 00:07:36 UTC -->
+<!-- Indices written at Mon, 27 Sep 2010 01:02:15 UTC -->
 
-<datastore-indexes/>
+<datastore-indexes>
 
+    <!-- Used 9 times in query history -->
+    <datastore-index kind="Comment" ancestor="false" source="auto">
+        <property name="postid" direction="asc"/>
+        <property name="createTime" direction="desc"/>
+    </datastore-index>
+
+</datastore-indexes>

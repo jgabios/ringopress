@@ -6,8 +6,9 @@
 <% subskin 'postskin' %>
 <div class="post">
     <!--<hr noshade align="left"/>-->
-   <h2><a href="/post?postid=<% post._id %>"><% post.title %></a> [<% post.getCommentsCount() %> comments]</h2>
+   <h2><a href="/post/<% post.url %>"><% post.title %></a></h2>
+   <div class="subTitle">[<% post.getCommentsCount() %> comments] posted on <% post.getFormattedCreationTime() %></div>
    <div>
-    <% post.text %>
+    <% post.getShortDescription() %>
    </div>
 </div>

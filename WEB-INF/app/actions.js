@@ -12,22 +12,10 @@ exports.index = function (req) {
     	});
 }
 
-exports.create = function (req){
-    if(req.isGet){
-	return skinResponse('skins/edit.html');
-    } else {
-	var post = new model.Post();
-	for each (var key in ['text', 'title']) {
-    	    post[key] = req.params[key];
-            post['createTime'] = new Date();
-	}
-	post.save();
-	return redirectResponse('/');
-    }
-}
-
 exports.post = function (req,url){
-    var post = model.Post.query().equals('url', url);
+    var posts = model.Post.query().equals('url', url).select();
+    var post = posts[0];
+    print(url);
     if(!req.isGet){
 	var comment = new model.Comment();
 	for each (var key in ['author', 'email','website','comment','postid']) {
@@ -59,4 +47,10 @@ exports.feed = function(){
     });
     response.contentType='text/xml';
     return response;
+}
+
+function printall(obj){
+    for (var i in obj){
+        print(i+' - '+obj[i]);
+    }
 }

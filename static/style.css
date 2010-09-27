@@ -17,8 +17,14 @@ h1 {
 
 h2 {
     font-size: 18px;
+    margin: auto auto 0 auto;
 }
 
+.subTitle {
+    font-size: 14px;
+    color: #717171;
+    margin-bottom: 8px;
+}
 #container {
     margin: 10px auto 0px auto;
     width: 60%;
@@ -57,7 +63,7 @@ h2 {
 
 .post {
     text-align: left;
-    padding-bottom: 5px;
+    padding-bottom: 15px;
     color: #717171;
     border-bottom: 1px solid #333333;
     margin: 20px 0px 5px 0px;

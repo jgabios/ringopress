@@ -10,17 +10,15 @@ Post.prototype.getCommentsCount = function(){
 }
 
 Post.prototype.getShortDescription = function(){
-    return this.text.substring(0,32);
+    return this.text.substring(0,132)+' ...';
 }
 
-Post.prototype.save = function(){
-    this.url = this.title.replace('/[^a-zA-Z0-9]/g','-');
-    this.save();
+Post.save = function(post){
+    var dateUrlPart = post.createTime.format('dd-MMM');
+    post.url = dateUrlPart+'-'+post.title.replace(/[^a-zA-Z0-9]/g,'-');
+    post.save();
 }
 
-Comment.prototype.renderAuthor = function(){
-    if(this.website.length>3)
-        return '<a href';
-    else
-        return 'wewe';
+Post.prototype.getFormattedCreationTime = function(){
+    return this.createTime.format('dd MMM yyyy');
 }

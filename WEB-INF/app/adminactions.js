@@ -25,21 +25,23 @@ exports.create = function (req){
     	    post[key] = req.params[key];
             post['createTime'] = new Date();
 	}
-	post.save();
-	return redirectResponse('/');
+	model.Post.save(post);
+	return redirectResponse('/admin');
     }
 }
 
 exports.edit = function (req){
+    var post = model.Post.get(req.params['id']);
     if(req.isGet){
-	return skinResponse('skins/admin/edit.html');
+	return skinResponse('skins/admin/edit.html',{
+            post: post
+        });
     } else {
-	var post = new model.Post();
 	for each (var key in ['text', 'title']) {
     	    post[key] = req.params[key];
-            post['createTime'] = new Date();
+            post['updateTime'] = new Date();
 	}
-	post.save();
-	return redirectResponse('/');
+	model.Post.save(post);
+	return redirectResponse('/admin');
     }
 }
