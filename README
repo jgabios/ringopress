@@ -6,6 +6,7 @@ how to install a blog on GAE in 3 easy steps:
 this step is to test it locally and modify it to please your heart,
 especially the skin here: /PATH/TO/jgabios-ringopress-XXXXXX/WEB-INF/app/skins/* and /PATH/TO/jgabios-ringopress-XXXXXX/static/style.css .
 3. /APPENGINE_PATH/bin/appcfg.sh update /PATH/TO/jgabios-ringopress-XXXXXX/
+4. modify <application>test55-p</application> line from /PATH/TO/jgabios-ringopress-XXXXXX/WEB-INF/appengine-web.xml to match your appid
 
 TODO:
 - comment management section.
