@@ -1,56 +1,105 @@
 include('ringo/webapp/response');
 var model = require('model');
-
-var title = 'Munteanu Gabriel - javascripter'
+var mail = require('ringo/mail');
+var ringoDate = require('ringo/utils/dates');
+var CONSTANTS = require('constants');
 //
 
 exports.index = function (req) {
-	return skinResponse('skins/index.html', {
-	    posts: model.Post.query().limit(5).orderBy('createTime','desc').select(),
-	    content: 'gogo',
-            title: title
-    	});
+    var next = req.params["next"];
+    if(!next){
+        next=0;
+    } else {
+        next=parseInt(next);
+    }
+
+    var counter = model.PostCounter.query().select();
+    var numberOfPosts = 0;
+    if(counter && counter.length>0)
+        numberOfPosts = counter[0].numberOfPosts;
+    var showNext = numberOfPosts>=(next+1)*CONSTANTS.POSTS_PER_PAGE;
+    var prev = next-1;
+    var showPrevious = next >= 1;
+    return Response.skin('skins/index.html', {
+        posts: model.Post.query().limit(CONSTANTS.POSTS_PER_PAGE).offset(next*CONSTANTS.POSTS_PER_PAGE).orderBy('createTime','desc').select(),
+        content: 'gogo',
+        title: CONSTANTS.BLOGTITLE,
+        next: ++next,
+        prev: prev,
+        showNext: showNext,
+        showPrevious: showPrevious
+    });
+}
+
+exports.importPosts = function(req){
+    if(!req.isGet){
+        if(req.params["post"]=="true"){
+            var post = new model.Post();
+            for each (var key in ['text', 'title']) {
+                post[key] = req.params[key];
+            }
+            post['createTime'] = new Date(parseInt(req.params['creationDate']));
+            model.Post.save(post);
+            req.session.data["postId"]=post._id;
+        } else {
+            var comment = new model.Comment();
+            for each (var key in ['author', 'email','website','comment']) {
+                comment[key] = req.params[key];
+            }
+            comment['postid'] = req.session.data["postId"];
+            comment['createTime'] = new Date(parseInt(req.params['creationDate']));
+            comment.save();
+        }
+    }
+    return Response.skin('skins/import.html',{
+        sessData: 'ok'
+    });
 }
 
 exports.post = function (req,url){
     var posts = model.Post.query().equals('url', url).select();
     var post = posts[0];
-    print(url);
+    //post.text = post.text.replace(/\r/g,"");
+    //post.text = post.text.replace(/\n{1,2}/g,"<br/>");
     if(!req.isGet){
-	var comment = new model.Comment();
-	for each (var key in ['author', 'email','website','comment','postid']) {
-    	    comment[key] = req.params[key];
-            comment['createTime'] = new Date();
-	}
-	comment.save();
+        var comment = new model.Comment();
+        for each (var key in ['author', 'email','website','comment','postid']) {
+            comment[key] = req.params[key];
+        }
+        comment['createTime'] = new Date();
+        var commentsApprovedForThisEmail = model.Comment.query().equals('email',comment.email).equals('spam',false).select();
+        if(commentsApprovedForThisEmail.length==0)
+            comment.spam=true;
+        else
+            comment.spam=false;
+        comment.save();
+        emailBody = 'you got a new comment on your post:\r\n';
+        emailBody += 'http://bash.editia.info'+req.pathDecoded+' - '+post.title+'\r\n';
+        emailBody += 'author: '+comment.author+' [ '+comment.email+' ] from '+comment.website+'\r\n-----------------------\r\n';
+        emailBody += comment.comment;
+        mail.gsend({from: 'jajalinux@gmail.com', to: 'jajalinux@gmail.com',text: emailBody,subject: 'new comment from '+comment.author});
     }
-    var comments = model.Comment.query().equals('postid',post._id).orderBy('createTime','desc').select();
-    return skinResponse('skins/post.html',{
+    var comments = model.Comment.query().equals('postid',post._id).equals('spam',false).orderBy('createTime','desc').select();
+    return Response.skin('skins/post.html',{
         post: post,
         comments: comments
     });
 }
 
 exports.contact = function () {
-	return skinResponse('skins/contact.html', {
-            title: title+' - contact me'
-    	});
+    return Response.skin('skins/contact.html', {
+        title: CONSTANTS.BLOG_TITLE+' - contact me'
+    });
 }
 
 exports.feed = function(){
     var posts = model.Post.query().limit(10).orderBy('createTime','desc').select();
-    var lastNewsTime = posts[0].createTime.format('EEE, dd MMM yyyy HH:mm:ss Z');
-    var response = skinResponse('skins/feed.xml', {
-        title: title,
+    var lastNewsTime = ringoDate.format(posts[0].createTime,'EEE, dd MMM yyyy HH:mm:ss Z');
+    var response = Response.skin('skins/feed.xml', {
+        title: CONSTANTS.BLOG_TITLE,
         lastBuildDate: lastNewsTime,
         posts: posts
     });
     response.contentType='text/xml';
     return response;
-}
-
-function printall(obj){
-    for (var i in obj){
-        print(i+' - '+obj[i]);
-    }
 }

@@ -5,16 +5,22 @@ how to install a blog on GAE in 3 easy steps:
 2./optional /APPENGINE_PATH/bin/dev_appserver.sh /PATH/TO/jgabios-ringopress-XXXXXX/ [the folder downloaded from github with the code]
 this step is to test it locally and modify it to please your heart,
 especially the skin here: /PATH/TO/jgabios-ringopress-XXXXXX/WEB-INF/app/skins/* and /PATH/TO/jgabios-ringopress-XXXXXX/static/style.css .
-3. /APPENGINE_PATH/bin/appcfg.sh update /PATH/TO/jgabios-ringopress-XXXXXX/
-4. modify <application>test55-p</application> line from /PATH/TO/jgabios-ringopress-XXXXXX/WEB-INF/appengine-web.xml to match your appid
+3. modify <application>test55-p</application> line from /PATH/TO/jgabios-ringopress-XXXXXX/WEB-INF/appengine-web.xml to match your appid
+4. /APPENGINE_PATH/bin/appcfg.sh update /PATH/TO/jgabios-ringopress-XXXXXX/
 
 TODO:
-- comment management section.
+- add captcha.
+- image management
 
 features:
 - you can manage your blog from here: /admin/ in a secure manner, that is only the google owner of the app can do it with
 his google account, or whoever he gives that right to in the appengine admin interface.
 - for now you can only create/edit/delete posts.
 - you have RSS feed.
-- people can comment on your posts, no captcha for now, anybody can spam your comment section.
-
+- people can comment on your posts, no captcha for now
+- comment management section. basically, all comments are marked as spam as long as the author's email has an already approved comment.
+an email to your app's admin is sent whenever a comment is posted.
+- Lighter as code syntax highlighter
+- mooEditable as Rich Text Editor in the admin section
+- new (nicer) design
+- a wordpress importer [posts and comments]

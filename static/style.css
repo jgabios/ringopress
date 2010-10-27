@@ -1,44 +1,45 @@
 html, body {
     margin: 0;
     padding: 0;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    background: #F9F9F0;
 }
 
 h3 {
     margin: 0;
     padding: 0;
-    color: #000080;
+    color: #000;
 }
 
 h1 {
     margin: 20px 0px 0px 0px;
     padding: 0;
-    color: #000080;
+    color: #000;
 }
 
 h2 {
-    font-size: 18px;
+    font-size: 19px;
     margin: auto auto 0 auto;
 }
 
 .subTitle {
-    font-size: 14px;
-    color: #717171;
+    color: #111;
     margin-bottom: 8px;
 }
 #container {
     margin: 10px auto 0px auto;
     width: 60%;
-    background-color: #E2F4FE;
+    background-color: #FFF;
     padding: 0px;
-    border: 2px solid #89C2DF;
-    color: #0000ee;
+    border: 1px solid #CCC;
+    color: #111;
+    font-size: 14px;
 }
 
 #header {
-    background: #E2F4FE;
     margin-bottom: 10px;
-    padding: 10px 5px;
-    text-align: center;
+    padding: 10px 25px;
+    text-align: left;
 }
 
 #menu {
@@ -52,30 +53,30 @@ h2 {
 
 #menu ul li {
     margin: 0px 5px 0px 0px;
-    border-bottom: 1px solid #89C2DF;
+    border-bottom: 1px solid #CCC;
 }
 
 #content {
     margin: 10px;
     padding: 10px 45px;
-    text-align: center;
 }
 
 .post {
     text-align: left;
     padding-bottom: 15px;
     color: #717171;
-    border-bottom: 1px solid #333333;
+    border-bottom: 1px solid #CCC;
     margin: 20px 0px 5px 0px;
+    font-size: 13px;
 }
 
-.post a {
-    color: #333333;
+.post a.title {
+    color: #FF6600;
     text-decoration: none;
 }
 
-.post a:hover {
-    color: #0066CC;
+.post a.title:hover {
+    color: #000;
 }
 
 /*
@@ -89,24 +90,40 @@ background-color: #89C2DF;
 */
 #post {
     text-align: left;
+    margin: 5px 5px 25px 5px;
 }
+
+#post h1 {
+    color: #FF6600;
+    font-size: 25px;
+}
+
+#post h1 span{
+    color: #000;
+    font-size: 24x;
+}
+
 .clearer {
     clear: both;
 }
 
 .menulink {
     text-decoration: none;
-    color: #06C;
+    color: #333;
+}
+
+.menulink:visited {
+    color: #333;
 }
 
 .menulink:hover {
-    color: #09f;
+    color: #000;
 }
 
 .formFirstColumn {
     float: left;
     text-align: right;
-    width: 15%;
+    width: 63px;
     margin: 5px;
 }
 
@@ -120,5 +137,72 @@ background-color: #89C2DF;
 #comments {
     text-align: left;
     padding: 14px 0px 1px 10px;
-    border-top: 1px solid #555555;
+    border-top: 1px solid #CCC;
+    margin-bottom: 15px;
+}
+
+.lefty {
+    float: left;
+}
+
+.righty {
+    float: right;
+}
+
+input, textarea {
+    border: 1px solid #D1D1D1;
+}
+
+hr {
+    border: none 0;
+    border-top: 1px solid #CCC;
+    height: 1px;
+}
+
+a {
+    text-decoration: none;
+    font-size: 15px;
+    color: #00F;
+}
+
+a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+a:visited {
+    color: #00F;
+}
+
+a.commentsTitle {
+    font-size: 16px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.commentText {
+    margin: 5px 1px;
+}
+
+form {
+    margin: 0px;
+    padding: 0px;
+}
+
+.commentFormTitle {
+    text-align: left;
+}
+
+.comment {
+    text-align: left;
+}
+
+.adminComment {
+    text-align: left;
+    border-bottom: 1px solid #CCC;
+}
+
+.spam {
+    background-color: #ff3333;
+    color: #FFF;
 }

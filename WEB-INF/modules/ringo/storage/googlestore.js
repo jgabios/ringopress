@@ -1,5 +1,5 @@
 
-require('core/string');
+var strings = require('ringo/utils/strings');
 var {addHostObject} = require('ringo/engine');
 var {bindArguments} = require('ringo/functional');
 
@@ -61,6 +61,9 @@ function abortTransaction() {
 
 function create(type, key, entity) {
     var ctor = registry[type];
+    if (!ctor) {
+        throw new Error('Entity "' + type + '" is not defined');
+    }
     return ctor.createInstance(key, entity);
 }
 
@@ -201,7 +204,7 @@ function getEntity(type, arg) {
         // need them before to resolve references in pre-store
         var id, idlength = 10;
         do {
-            id = "k" + String.random(idlength++);
+            id = "k" + strings.random(idlength++);
             var entity = new Entity(type, id, rootKey);
             try {
                 datastore.get(getTransaction(), entity.getKey()) != null
@@ -242,7 +245,7 @@ function getProperties(store, entity) {
             value = value.getValue();
         } else if (value instanceof java.util.Date) {
             value = new Date(value.getTime());
-        } else {
+        } else if (value !== undefined) {
             value = org.mozilla.javascript.Context.javaToJS(value, global);
         }
         props[i] = value;

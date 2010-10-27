@@ -6,7 +6,6 @@
 
 include('io');
 include('binary');
-require('core/array');
 
 export('canonical',
        'changeWorkingDirectory',
@@ -214,6 +213,7 @@ function Permissions(permissions, constructor) {
     }
     this.update(Permissions['default']);
     this.update(permissions);
+    /** @ignore */
     this.constructor = constructor;
 }
 

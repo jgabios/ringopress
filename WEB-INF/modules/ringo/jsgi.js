@@ -1,9 +1,13 @@
+/**
+ * @fileOverview Low level JSGI adapter implementation.
+ */
 
-include('ringo/webapp/util');
-include('io');
-include("binary");
+var {Headers, getMimeParameter} = require('ringo/webapp/util');
+var {Stream} = require('io');
+var {Binary, ByteString} = require('binary');
+var system = require('system')
 
-export('handleRequest');
+export('handleRequest', 'writeHeaders');
 var log = require('ringo/logging').getLogger(module.id);
 
 /**
@@ -49,7 +53,7 @@ function initRequest(request) {
     Object.defineProperty(request, "input", {
         get: function() {
             if (!input)
-                input = new Stream(request.env.servlet_request.getInputStream());
+                input = new Stream(request.env.servletRequest.getInputStream());
             return input;
         }
     });
@@ -68,32 +72,42 @@ function initRequest(request) {
  * @param result the object returned by a JSGI application
  */
 function commitResponse(req, result) {
+    var request = req.env.servletRequest;
+    var response = req.env.servletResponse;
     var {status, headers, body} = result;
-    var request = req.env.servlet_request;
-    var response = req.env.servlet_response;
     if (!status || !headers || !body) {
-        // As a convenient shorthand, we also handle async responses returning the
-        // not only the promise but the full deferred (as obtained by
-        // ringo.promise.defer()).
-        if (result.promise && typeof result.promise.then === "function") {
-            result = result.promise;
-        }
-        // If the response has a "then" function, we asume it is a promise and
-        // switch to async reponse handling.
-        if (typeof result.then === "function") {
-            handleAsyncResponse(request, result);
+        // Check if this is an asynchronous response. If not throw an Error
+        if (handleAsyncResponse(request, response, result)) {
             return;
+        } else {
+            throw new Error('No valid JSGI response: ' + result);
         }
-        throw new Error('No valid JSGI response: ' + result);
     }
-    response.setStatus(status);
+    // Allow application/middleware to handle request via Servlet API
+    if (!response.isCommitted() && !Headers(headers).contains("X-JSGI-Skip-Response")) {
+        writeResponse(response, status, headers, body);
+    }
+}
+
+function writeResponse(servletResponse, status, headers, body) {
+    servletResponse.setStatus(status);
+    writeHeaders(servletResponse, headers);
+    var charset = getMimeParameter(headers.get("Content-Type"), "charset");
+    writeBody(servletResponse, body, charset);
+}
+
+function writeHeaders(servletResponse, headers) {
     for (var key in headers) {
-        headers[key].split("\n").forEach(function(value) {
-            response.addHeader(key, value);
+        var values = headers[key];
+        if (typeof values === "string") {
+            values = values.split("\n");
+        } else if (!Array.isArray(values)) {
+            continue;
+        }
+        values.forEach(function(value) {
+            servletResponse.addHeader(key, value);
         });
     }
-    var charset = getMimeParameter(Headers(headers).get("Content-Type"), "charset");
-    writeBody(response, body, charset);
 }
 
 function writeBody(response, body, charset) {
@@ -104,7 +118,6 @@ function writeBody(response, body, charset) {
                 part = part.toByteString(charset);
             }
             output.write(part);
-            output.flush();
         };
         body.forEach(writer);
         if (typeof body.close == "function") {
@@ -119,18 +132,29 @@ function writeAsync(servletResponse, jsgiResponse) {
     if (!jsgiResponse.status || !jsgiResponse.headers || !jsgiResponse.body) {
         throw new Error('No valid JSGI response: ' + jsgiResponse);
     }
-    var {status, headers} = jsgiResponse;
-    servletResponse.status = status;
-    for (var name in headers) {
-        servletResponse.setHeader(name, headers[name]);
-    }
-    var charset = getMimeParameter(Headers(headers).get("Content-Type"), "charset");
-    writeBody(servletResponse, jsgiResponse.body, charset);
+    var {status, headers, body} = jsgiResponse;
+    writeResponse(servletResponse, status, Headers(headers), body);
 }
 
-function handleAsyncResponse(request, result) {
-    // experimental support for asynchronous JSGI based on Jetty continuations
-    var ContinuationSupport = org.eclipse.jetty.continuation.ContinuationSupport;
+function handleAsyncResponse(request, response, result) {
+    // support for asynchronous JSGI based on Jetty continuations
+    // If result has a "suspend" method we just call it and return, letting
+    // the response take care of everything
+    if (typeof result.suspend === "function") {
+        result.suspend();
+        return true;
+    }
+    // As a convenient shorthand, allow apps to return the deferred as returned
+    // by ringo.promise.defer()
+    if (result.promise && typeof result.promise.then === "function") {
+        result = result.promise;
+    }
+    // Only handle asynchronously if the result has a then() function
+    if (typeof result.then !== "function") {
+        return false;
+    }
+
+    var {ContinuationSupport, ContinuationListener} = org.eclipse.jetty.continuation;
     var continuation = ContinuationSupport.getContinuation(request);
     var handled = false;
 
@@ -138,9 +162,6 @@ function handleAsyncResponse(request, result) {
         if (handled) return;
         log.debug("JSGI async response finished", value);
         handled = true;
-        if (value && typeof value.close === 'function') {
-            value = value.close();
-        }
         writeAsync(continuation.getServletResponse(), value);
         continuation.complete();
     }, request);
@@ -158,7 +179,7 @@ function handleAsyncResponse(request, result) {
         continuation.complete();
     }, request);
 
-    continuation.addContinuationListener(new org.eclipse.jetty.continuation.ContinuationListener({
+    continuation.addContinuationListener(new ContinuationListener({
         onTimeout: sync(function() {
             if (handled) return;
             log.error("JSGI async timeout");
@@ -177,9 +198,10 @@ function handleAsyncResponse(request, result) {
     sync(function() {
         result.then(onFinish, onError);
         // default async request timeout is 30 seconds
-        continuation.setTimeout(30000);
-        continuation.suspend();
+        continuation.setTimeout(result.timeout || 30000);
+        continuation.suspend(response);
     }, request)();
+    return true;
 }
 
 /**

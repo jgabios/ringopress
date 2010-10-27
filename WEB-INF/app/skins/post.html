@@ -2,10 +2,16 @@
 <% subskin content %>
 
 <div id="post">
-    <h1> <% post.title %> </h1>
+    <h1> <% post.title %> - <span><% post.getFormattedCreationTime() %></span></h1>
+    <br/><br/>
     <% post.text %>
 </div>
 
+<% if <% comments.length %> render 'commentsListing' %>
+<% if not <% comments.length %> render 'noCommentsYet' %>
+
+<div class="commentFormTitle">Leave a comment:</div>
+<br/>
 <form name="commentform" action="<% href %>" method="POST">
     <input type="hidden" name="postid" value="<% post._id %>"/>
     <div class="formFirstColumn">author</div>
@@ -20,26 +26,50 @@
     <div class="formFirstColumn">Comment</div>
     <div class="formSecondColumn"><textarea name="comment" cols="30" rows="10"></textarea></div>
     <div class="clearer"> </div>
-    <div class="formFirstColumn"><input type="submit" name="Save" value="Submit comment"/></div>
+    <div class="formFirstColumn"> </div>
+    <div class="formSecondColumn"><input type="submit" name="Save" value="Submit comment"/></div>
     <div class="clearer"> </div>
 </form>
-<div id="comments">
-<a name="anyname">Comments:</a>
-<% for comment in <% comments %> render 'commentskin' %>
-</div>
 
 <% subskin 'commentskin' %>
 <div class="comment">
 
-    @ <% if <% comment.website %> render 'commentAuthorWithWebsite' %>
+    <% if <% comment.website %> render 'commentAuthorWithWebsite' %>
     <% if not <% comment.website %> render 'commentAuthorWithoutWebsite' %>
-   <div>
-    <% comment.comment %>
+   <div class="commentText">
+    <% comment.getCommentText() %>
    </div>
 </div>
+<hr width="30%" align="left"/>
 
 <% subskin 'commentAuthorWithWebsite' %>
-<a href="<% comment.website %>" target="_blank"><% comment.author %></a> said:
+<% comment.getFormattedCreationTime() %> <br/> <a href="<% comment.website %>" target="_blank"><% comment.author %></a> said:
 
 <% subskin 'commentAuthorWithoutWebsite' %>
-<% comment.author %> said:
+<% comment.getFormattedCreationTime() %> <br/> <% comment.author %> said:
+
+
+
+<% subskin 'commentsListing' %>
+<div id="comments">
+<a name="commentsLine" class="commentsTitle">Comments:</a>
+<% for comment in <% comments %> render 'commentskin' %>
+</div>
+
+<% subskin 'noCommentsYet' %>
+<div id="comments">
+No comments yet.
+</div>
+<link href="/static/lighter/Flame.git.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="/static/js/mootools.js"></script>
+<script type="text/javascript" src="/static/js/lighter/lighter.js"></script>
+<script type="text/javascript">
+    $$('code').each(function(element) {
+    var lighter = new Lighter(element, {
+        altLines: 'odd',
+        container: element,
+        flame: 'git',
+        mode: 'ol'
+    });
+})
+</script>

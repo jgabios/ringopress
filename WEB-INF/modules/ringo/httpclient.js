@@ -5,7 +5,7 @@
 
 importPackage(org.eclipse.jetty.client);
 
-require('core/object');
+var objects = require('ringo/utils/objects');
 var {ByteString, Binary} = require('binary');
 var {Buffer} = require('ringo/buffer');
 var {Decoder} = require('ringo/encoding');
@@ -20,38 +20,38 @@ export('request', 'post', 'get', 'del', 'put', 'Client');
  */
 var Cookie = function(cookieStr) {
     
-    /**
-     * @returns {String} the cookie's name
-     */
-    Object.defineProperty(this, "name", {
-        get: function() {
-            return cookie.getName();
-        }
-    });
-
-    /**
-     * @returns {String} the cookie value
-     */
-    Object.defineProperty(this, "value", {
-        get: function() {
-            return cookie.getValue();
-        }
-    });
-    /**
-     * @returns {String} the cookie domain
-     */
-    Object.defineProperty(this, "domain", {
-        get: function() {
-            return cookie.getDomain();
-        }
-    });
-    
-    /**
-     * @returns {String} the cookie path
-     */
-    Object.defineProperty(this, "path", {
-        get: function() {
-            return cookie.getPath();
+    Object.defineProperties(this, {
+        /**
+         * @returns {String} the cookie's name
+         */
+        name: {
+            get: function() {
+                return cookie.getName();
+            }
+        },
+        /**
+         * @returns {String} the cookie value
+         */
+        value: {
+            get: function() {
+                return cookie.getValue();
+            }
+        },
+        /**
+         * @returns {String} the cookie domain
+         */
+        domain: {
+            get: function() {
+                return cookie.getDomain();
+            }
+        },
+        /**
+         * @returns {String} the cookie path
+         */
+        path: {
+            get: function() {
+                return cookie.getPath();
+            }
         }
     });
     
@@ -124,11 +124,12 @@ Cookie.PATTERN = /([^=;]+)=?([^;]*)(?:;\s*|$)/g;
 /**
  * An Exchange encapsulates the Request and Response of an HTTP Exchange.
  * @constructor
+ * @name Exchange
  */
 var Exchange = function(url, options, callbacks) {
     if (!url) throw new Error('missing url argument');
 
-    var opts = Object.merge(options, {
+    var opts = objects.merge(options, {
         data: {},
         headers: {},
         method: 'GET',
@@ -141,60 +142,116 @@ var Exchange = function(url, options, callbacks) {
         return "[ringo.httpclient.Exchange] " + url;
     };
     
-    Object.defineProperty(this, "status", {
-        get: function() {
-            return exchange.getResponseStatus();
-        }
-    });
-    Object.defineProperty(this, "contentType", {
-        get: function() {
-            return responseFields.getStringField('Content-Type');
-        }
-    });
-    Object.defineProperty(this, "content", {
-        get: function() {
-            return exchange.getResponseContent();
-        }
-    });
-    Object.defineProperty(this, "contentBytes", {
-        get: function() {
-            return ByteString.wrap(exchange.getResponseContentBytes());
-        }
-    });
-    Object.defineProperty(this, "contentChunk", {
-        get: function() {
-            return exchange.getRequestContentChunk();
-        }
-    });
-    Object.defineProperty(this, "contentExchange", {
-        get: function() {
-            return exchange;
-        }
-    });
-    Object.defineProperty(this, "responseHeaders", {
-        get: function() {
-            return responseFields;
-        }
-    });
-    Object.defineProperty(this, "cookies", {
-        get: function() {
-            var cookies = {};
-            var cookieHeaders = responseFields.getValues("Set-Cookie");
-            while (cookieHeaders.hasMoreElements()) {
-                var cookie = new Cookie(cookieHeaders.nextElement());
-                cookies[cookie.name] = cookie;
+    Object.defineProperties(this, {
+        /**
+         * The response status code
+         * @name Exchange.instance.status
+         */
+        status: {
+            get: function() {
+                return exchange.getResponseStatus();
             }
-            return cookies;
-        }
-    });
-
-    /**
-     * return response encoding
-     * NOTE HttpExchange._encoding knows about this but is protected
-     */
-    Object.defineProperty(this, "encoding", {
-        get: function() {
-            return getMimeParameter(this.contentType, "charset") || 'utf-8';
+        },
+        /**
+         * The response content type
+         * @name Exchange.instance.contentType
+         */
+        contentType: {
+            get: function() {
+                return responseFields.getStringField('Content-Type');
+            }
+        },
+        /**
+         * The response body as String
+         * @name Exchange.instance.content
+         */
+        content: {
+            get: function() {
+                return exchange.getResponseContent();
+            }
+        },
+        /**
+         * The response body as ByteString
+         * @name Exchange.instance.contentBytes
+         */
+        contentBytes: {
+            get: function() {
+                return ByteString.wrap(exchange.getResponseContentBytes());
+            }
+        },
+        /**
+         * @name Exchange.instance.contentChunk
+         */
+        contentChunk: {
+            get: function() {
+                return exchange.getRequestContentChunk();
+            }
+        },
+        /**
+         * The Jetty ContentExchange object
+         * @see http://download.eclipse.org/jetty/7.0.2.v20100331/apidocs/org/eclipse/jetty/client/ContentExchange.html
+         * @name Exchange.instance.contentExchange
+         */
+        contentExchange: {
+            get: function() {
+                return exchange;
+            }
+        },
+        /**
+         * The response headers
+         * @name Exchange.instance.responseHeaders
+         */
+        responseHeaders: {
+            get: function() {
+                return responseFields;
+            }
+        },
+        /**
+         * The cookies set by the server
+         * @name Exchange.instance.cookies
+         */
+        cookies: {
+            get: function() {
+                var cookies = {};
+                var cookieHeaders = responseFields.getValues("Set-Cookie");
+                while (cookieHeaders.hasMoreElements()) {
+                    var cookie = new Cookie(cookieHeaders.nextElement());
+                    cookies[cookie.name] = cookie;
+                }
+                return cookies;
+            }
+        },
+        /**
+         * The response encoding
+         * @name Exchange.instance.encoding
+         */
+        encoding: {
+            // NOTE HttpExchange._encoding knows about this but is protected
+            get: function() {
+                return getMimeParameter(this.contentType, "charset") || 'utf-8';
+            }
+        },
+        /**
+         * True if the request has completed, false otherwise
+         * @name Exchange.instance.done
+         */
+        done: {
+            get: function() {
+                return exchange.isDone();
+            }
+        },
+        /**
+         * Waits for the request to complete and returns the Exchange object itself.
+         * This method returns immediately if the request has already completed.
+         * Otherwise, it will block the current thread until completion.
+         * @returns the Exchange object
+         * @name Exchange.instance.wait
+         */
+        wait: {
+            value: function() {
+                exchange.waitForDone();
+                return this;
+            }
         }
     });
 
@@ -253,8 +310,9 @@ var Exchange = function(url, options, callbacks) {
             if (typeof(callbacks.complete) === 'function') {
                 callbacks.complete(content, self.status, self.contentType, self);
             }
-            // FIXME auto handle redirects for 3xx responses -
-            // these are currently treated as success
+            // This callback will only see a redirect status if the max number
+            // of redirects handled by the RedirectListener are reached or
+            // the client was instantianted with followRedirects = false.
             if (self.status >= 200 && self.status < 400) {
                 if (typeof(callbacks.success) === 'function') {
                     callbacks.success(content, self.status, self.contentType, self);
@@ -316,7 +374,6 @@ var Exchange = function(url, options, callbacks) {
         },
     });
     
-    exchange.setRequestContentType(opts.contentType);
     exchange.setMethod(opts.method);
     
     if (opts.username && opts.password) {
@@ -343,6 +400,7 @@ var Exchange = function(url, options, callbacks) {
         } else if (typeof(content) !== 'undefined') {
             exchange.setRequestContentSource(content);
         }
+        exchange.setRequestContentType(opts.contentType);
     } else if (typeof(content) === 'string' && content.length) {
         url += "?" + content;
     }
@@ -356,7 +414,7 @@ var Exchange = function(url, options, callbacks) {
  * Defaults for options passable to to request()
  */
 var defaultOptions = function(options) {
-    return Object.merge(options || {}, {
+    return objects.merge(options || {}, {
         // exchange
         data: {},
         headers: {},
@@ -435,9 +493,10 @@ var extractOptionalArguments = function(args) {
  * or if you want cookies to be preserved between multiple requests.
  
  * @param {Number} timeout The connection timeout
+ * @param {Boolean} followRedirects If true then redirects (301, 302) are followed
  * @constructor
  */
-var Client = function(timeout) {
+var Client = function(timeout, followRedirects) {
 
     /**
      * Make a GET request.
@@ -608,6 +667,11 @@ var Client = function(timeout) {
     if (typeof timeout == "number") {
         client.setTimeout(timeout);
     }
+    
+    if (followRedirects !== false) {
+        client.registerListener('org.eclipse.jetty.client.RedirectListener');
+    }
+    // client.setMaxRedirects(20); // jetty default = 20
     // client.setIdleTimeout(10000);
     // TODO proxy stuff
     //client.setProxy(Adress);
@@ -625,7 +689,10 @@ var defaultClient = defaultClient || new Client();
  * @returns {Exchange} exchange object
  * @see Client.instance.request
  */
-var request = defaultClient.request;
+var request = function() {
+    return defaultClient.request.apply(defaultClient, arguments);
+};
+
 /**
  * Convenience function to make a POST request without creating a new client.
  * @param {String} url the url to request
@@ -635,7 +702,10 @@ var request = defaultClient.request;
  * @returns {Exchange} exchange object
  * @see Client.instance.request
  */
-var post = defaultClient.post;
+var post = function() {
+    return defaultClient.post.apply(defaultClient, arguments);
+};
+
 /**
  * Convenience function to make a GET request without creating a new client.
  * @param {String} url the url to request
@@ -645,7 +715,10 @@ var post = defaultClient.post;
  * @returns {Exchange} exchange object
  * @see Client.instance.request
  */
-var get = defaultClient.get;
+var get = function() {
+    return defaultClient.get.apply(defaultClient, arguments);
+};
+
 /**
  * Convenience function to make a DELETE request without creating a new client.
  * @param {String} url the url to request
@@ -655,7 +728,9 @@ var get = defaultClient.get;
  * @returns {Exchange} exchange object
  * @see Client.instance.request
  */
-var del = defaultClient.del;
+var del = function() {
+    return defaultClient.del.apply(defaultClient, arguments);
+};
 
 /**
  * Convenience function to make a PUT request without creating a new client.
@@ -666,6 +741,8 @@ var del = defaultClient.del;
  * @returns {Exchange} exchange object
  * @see Client.instance.request
  */
-var put = defaultClient.put;
+var put = function() {
+    return defaultClient.put.apply(defaultClient, arguments);
+};
 
 

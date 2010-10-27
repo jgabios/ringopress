@@ -1,6 +1,11 @@
-require('core/string');
-require('core/object');
+/**
+ * @fileOverview This module provides a flexible templating system.
+ */
+
+var strings = require('ringo/utils/strings');
+var objects = require('ringo/utils/objects');
 var engine = require('ringo/engine');
+var webenv = require('ringo/webapp/env');
 
 export('render', 'createSkin', 'Skin');
 
@@ -43,7 +48,7 @@ function render(skinOrResource, context) {
 function resolveSkin(base, skinPath) {
     var skinResource;
     var parentRepo = base.parentRepository;
-    if (parentRepo && skinPath.startsWith(".")) {
+    if (parentRepo && strings.startsWith(skinPath, ".")) {
         skinResource = parentRepo.getResource(skinPath);
     }
     if (!skinResource || !skinResource.exists()) {
@@ -61,12 +66,13 @@ function createSkin(resourceOrString) {
         return skincache[resourceOrString];
     }
     if (log.isDebugEnabled())
-        log.debug("creating skin: " + resourceOrString);
+        log.debug("creating skin: ", resourceOrString);
     var mainSkin = [];
     var subSkins = {};
     var currentSkin = mainSkin;
     var parentSkin = null;
     var eng = engine.getRhinoEngine();
+
     var parser = new org.ringojs.template.SkinParser({
         renderText: function(text) {
             currentSkin[currentSkin.length] = text;
@@ -87,7 +93,13 @@ function createSkin(resourceOrString) {
             }
         }
     });
-    parser.parse(resourceOrString);
+    if (resourceOrString instanceof org.ringojs.repository.Resource) {
+        var config = webenv.getConfig(),
+            charset = config && config.charset || 'utf8';
+        parser.parse(resourceOrString, charset);
+    } else {
+        parser.parse(resourceOrString);
+    }
     // normalization: cut trailing whitespace so it's
     // easier to tell if main skin should be inherited
     var lastPart = mainSkin[mainSkin.length - 1];
@@ -113,7 +125,6 @@ function Skin(mainSkin, subSkins, parentSkin, resourceOrString) {
     this.render = function render(context) {
         // extend context by globally provided macros and filters.
         // user-provided context overrides globally defined stuff
-        var webenv = require('ringo/webapp/env');
         context = webenv.loadMacros(context);
         if (mainSkin.length === 0 && parentSkin) {
             return renderInternal(parentSkin.getSkinParts(), context);
@@ -195,9 +206,32 @@ function Skin(mainSkin, subSkins, parentSkin, resourceOrString) {
         return value;
     }
 
+    function evaluateNestedMacros(macro, context) {
+        // We need to keep the original nested "MacroTag" objects obtained from
+        // parsing around, in order to be able to safely re-evaluate the same
+        // skin in differing contexts.
+        macro.nested = macro.nested || {};
+        for (var i in macro.parameters) {
+            var param = macro.nested[i] || macro.parameters[i];
+            if (param instanceof MacroTag) {
+                macro.nested[i] = param;
+                macro.parameters[i] = evaluateExpression(param, context, '_macro');
+            }
+        }
+        for (var k in macro.namedParameters) {
+            var param = macro.nested[k] || macro.namedParameters[k];
+            if (param instanceof MacroTag) {
+                macro.nested[k] = param;
+                macro.namedParameters[k] = evaluateExpression(param, context, '_macro');
+            }
+        }
+    }
+
     function evaluateExpression(macro, context, suffix, value) {
-        if (log.isDebugEnabled())
-            log.debug('evaluating expression: ' + macro);
+        if (log.isDebugEnabled()) {
+            log.debug('evaluating expression: ', macro);
+        }
+        evaluateNestedMacros(macro, context);
         if (builtin[macro.name]) {
             return builtin[macro.name](macro, context);
         }
@@ -238,23 +272,19 @@ function Skin(mainSkin, subSkins, parentSkin, resourceOrString) {
     // builtin macro handlers
     var builtin = {
         "render": function(macro, context) {
-            var skinName = macro.getParameter(0);
-            var skin = getEvaluatedParameter(skinName, context, 'render:skin');
+            var skin = macro.getParameter(0);
             return skin == null ? "" : self.renderSubskin(skin, context);
         },
 
         "echo": function(macro, context) {
-            var result = macro.parameters.map(function(elem) {
-                return getEvaluatedParameter(elem, context, 'echo');
-            });
+            var result = macro.parameters;
             var wrapper = macro.getParameter("wrap") || macro.getParameter("echo-wrap");
             if (wrapper != null) {
-                wrapper = getEvaluatedParameter(wrapper, context);
                 result = result.map(function(part) {return wrapper[0] + part + wrapper[1]});
             }
             var separator = macro.getParameter("separator");
             if (separator != null) {
-                return result.join(getEvaluatedParameter(separator), context, 'for:separator');
+                return result.join(separator);
             }
             return result.join(' ');
         },
@@ -264,9 +294,9 @@ function Skin(mainSkin, subSkins, parentSkin, resourceOrString) {
                 return "[Error in for-in macro: not enough parameters]";
             if (macro.parameters[1] != "in")
                 return "[Error in for-in macro: expected in]";
-            var name = getEvaluatedParameter(macro.parameters[0], context, 'for:name');
-            var list = getEvaluatedParameter(macro.parameters[2], context, 'for:list');
-            var subContext = context.clone();
+            var name = macro.parameters[0];
+            var list = macro.parameters[2];
+            var subContext = objects.clone(context || {});
             var subMacro = macro.getSubMacro(3);
             if (subMacro.name == "and") {
                 subMacro.name = "for";
@@ -274,17 +304,16 @@ function Skin(mainSkin, subSkins, parentSkin, resourceOrString) {
             var result = [];
             for (var [index, value] in list) {
                 subContext['index'] = index
-                subContext[name] = getEvaluatedParameter(value, context, 'for:value');
+                subContext[name] = value;
                 result.push(evaluateMacro(subMacro, subContext));
             }
             var wrapper = macro.getParameter("wrap") || macro.getParameter(name + "-wrap");
             if (wrapper != null) {
-                wrapper = getEvaluatedParameter(wrapper, context);
                 result = result.map(function(part) {return wrapper[0] + part + wrapper[1]});
             }
             var separator = macro.getParameter("separator");
             if (separator != null) {
-                return result.join(getEvaluatedParameter(separator), context, 'for:separator');
+                return result.join(separator);
             }
             return result.join('');
         },
@@ -300,7 +329,7 @@ function Skin(mainSkin, subSkins, parentSkin, resourceOrString) {
             if (bypass) {
                 index++;
             } else {
-                var condition = getEvaluatedParameter(macro.parameters[index++], context, 'if:condition');
+                var condition = macro.parameters[index++];
                 result = negated ? !condition : !!condition;
             }
             var subName = macro.parameters[index];
@@ -318,27 +347,16 @@ function Skin(mainSkin, subSkins, parentSkin, resourceOrString) {
         "set": function(macro, context) {
             if (macro.parameters.length < 2)
                 return "[Error in set macro: not enough parameters]";
-            var map = getEvaluatedParameter(macro.parameters[0], context, 'with:map');
-            var subContext = context.clone();
+            var map = macro.parameters[0];
+            var subContext = objects.clone(context || {});
             var subMacro = macro.getSubMacro(1);
             for (var [key, value] in map) {
-                subContext[key] = getEvaluatedParameter(value, context, 'with:value');;
+                subContext[key] = value;
             }
             return evaluateMacro(subMacro, subContext);
         }
 
     };
-
-    function getEvaluatedParameter(value, context, logprefix) {
-        if (log.isDebugEnabled())
-            log.debug(logprefix + ': macro called with value: ' + value);
-        if (value instanceof MacroTag) {
-            value = evaluateExpression(value, context, '_macro');
-            if (log.isDebugEnabled())
-                log.debug(logprefix + ': evaluated value macro, got ' + value);
-        }
-        return value;
-    }
 
     this.toString = function toString() {
         return "[Skin Object]";

@@ -3,14 +3,13 @@
  */
 
 // import modules
-require('core/object');
-require('core/string');
-
-include('ringo/webapp/request');
-include('ringo/webapp/response');
-
-var fileutils = require('ringo/fileutils');
+var strings = require('ringo/utils/strings');
+var {Request} = require('ringo/webapp/request');
+var {Response} = require('ringo/webapp/response');
+var system = require('system');
+var files = require('ringo/utils/files');
 var daemon = require('ringo/webapp/daemon');
+var webenv = require('ringo/webapp/env');
 
 export('getConfig',
        'handleRequest',
@@ -28,30 +27,26 @@ function handleRequest(req) {
     var configId = req.env.ringo_config || 'config';
     var config = getConfig(configId);
     if (log.isDebugEnabled()){
-        log.debug('got config: ' + config.toSource());
+        log.debug('got config', config);
     }
 
-    // set req in webapp env module
-    var webenv = require('ringo/webapp/env');
     req = Request(req);
-    var res = null;
-    webenv.setRequest(req);
-
     req.charset = config.charset || 'utf8';
-
     // URI-decode path-info
     req.pathInfo = decodeURI(req.pathInfo);
+    // set current request in webapp env module
+    webenv.setRequest(req);
 
     try {
-        return resolveInConfig(req, webenv, config, configId);
+        return resolveInConfig(req, config, configId);
     } catch (e if e.redirect) {
-        return redirectResponse(e.redirect);
+        return Response.redirect(e.redirect);
     } finally {
         webenv.reset();
     }
 }
 
-function resolveInConfig(req, webenv, config, configId) {
+function resolveInConfig(req, config, configId) {
     log.debug('resolving path {}', req.pathInfo);
     // set rootPath to the root context path on which this app is mounted
     // in the request object and config module, appPath to the path within the app.
@@ -65,15 +60,13 @@ function resolveInConfig(req, webenv, config, configId) {
         throw {notfound: true};
     }
 
-    var path = req.pathInfo.replace(/^\/+|\/+$/g, "");
-
     for each (var urlEntry in config.urls) {
         if (!Array.isArray(urlEntry) || urlEntry.length < 2) {
             log.info("Ignoring unsupported URL mapping: " + urlEntry);
             continue;
         }
-        log.debug("checking url line: {}", urlEntry);
-        var match = getPattern(urlEntry).exec(path);
+        log.debug("checking url line: {} against {}", urlEntry, req.pathInfo);
+        var match = getPattern(urlEntry).exec(req.pathInfo);
         log.debug("got match: {}", match);
 
         if (match) {
@@ -81,20 +74,17 @@ function resolveInConfig(req, webenv, config, configId) {
             var module = getModule(moduleId);
             log.debug("Resolved module: {} -> {}", moduleId, module);
             // move matching path fragment from PATH_INFO to SCRIPT_NAME
-            appendToScriptName(req, match[0]);
+            var remainingPath = getRemainingPath(req, match[0]);
             // prepare action arguments, adding regexp capture groups if any
             var args = [req].concat(match.slice(1));
             // lookup action in module
-            var action = getAction(req, module, urlEntry, args);
+            var action = getAction(req, module, urlEntry, remainingPath, args);
             // log.debug("got action: " + action);
             if (typeof action == "function") {
-                var res = action.apply(module, args);
-                if (res && typeof res.close === 'function') {
-                    return res.close();
-                }
-                return res;
+                return action.apply(module, args);
             } else if (Array.isArray(module.urls)) {
-                return resolveInConfig(req, webenv, module, moduleId);
+                shiftPath(req, remainingPath);
+                return resolveInConfig(req, module, moduleId);
             }
         }
     }
@@ -104,8 +94,6 @@ function resolveInConfig(req, webenv, config, configId) {
 function getPattern(spec) {
     var pattern = spec[0];
     if (typeof pattern == "string") {
-        if (pattern.startsWith("/"))
-            pattern = pattern.replace("/", "^");
         pattern = spec[0] = new RegExp(pattern);
     } else if (!(pattern instanceof RegExp)) {
         throw Error("Pattern must be a regular expression or string");
@@ -116,7 +104,7 @@ function getPattern(spec) {
 function resolveId(parent, spec) {
     var moduleId = spec[1];
     if (typeof moduleId == "string") {
-        return fileutils.resolveId(parent, moduleId);
+        return files.resolveId(parent, moduleId);
     } else {
         return moduleId;
     }
@@ -131,8 +119,8 @@ function getModule(moduleId) {
     return moduleId;
 }
 
-function getAction(req, module, urlconf, args) {
-    var path = splitPath(req.pathInfo);
+function getAction(req, module, urlconf, remainingPath, args) {
+    var path = splitPath(remainingPath);
     var action;
     // if url-conf has a hard-coded action name use it
     var name = urlconf[2];
@@ -144,11 +132,17 @@ function getAction(req, module, urlconf, args) {
             name = path[0];
             if (name) {
                 action = module[name.replace(/\./g, "_")];
+                // actions may be specific to HTTP methods:
+                // { GET: function()..., POST: function()... };
+                if (action && typeof action[req.method] == "function") {
+                    action = action[req.method];
+                }
                 if (typeof action == "function") {
                     // If the request path contains additional elements check whether the
                     // candidate function has formal arguments to take them
                     if (path.length <= 1 || args.length + path.length - 1 <= action.length) {
-                        appendToScriptName(req, name);
+                        shiftPath(req, remainingPath);
+                        shiftPath(req, getRemainingPath(req, name));
                         Array.prototype.push.apply(args, path.slice(1));
                         return action;
                     }
@@ -159,6 +153,10 @@ function getAction(req, module, urlconf, args) {
         }
         action = module[name];
     }
+    // check for HTTP method specific action
+    if (action && typeof action[req.method] == "function") {
+        action = action[req.method];
+    }
     if (typeof action == "function") {
         // insert predefined arguments if defined in url-conf
         if (urlconf.length > 3) {
@@ -166,7 +164,8 @@ function getAction(req, module, urlconf, args) {
             Array.prototype.splice.apply(args, spliceArgs);
         }
         if (path.length == 0 || args.length + path.length <= action.length) {
-            if (path.length == 0 && args.slice(1).join('').length == 0) {
+            shiftPath(req, remainingPath);
+            if (path.length == 0 && args.slice(1).join("").length == 0) {
                 checkTrailingSlash(req);
             }
             Array.prototype.push.apply(args, path);
@@ -178,23 +177,25 @@ function getAction(req, module, urlconf, args) {
 
 function checkTrailingSlash(req) {
     // only redirect for GET requests
-    if (!req.path.endsWith("/") && req.isGet) {
+    if (!strings.endsWith(req.path, "/") && req.isGet) {
         var path = req.queryString ?
                 req.path + "/?" + req.queryString : req.path + "/";
         throw {redirect: path};
     }
 }
 
-function appendToScriptName(req, fragment) {
+function getRemainingPath(req, fragment) {
     var path = req.pathInfo;
     var pos = path.indexOf(fragment);
-    if (pos > -1) {
-        pos += fragment.length;
-        // add matching pattern to script-name
-        req.scriptName += path.substring(0, pos);
-        // ... and remove it from path-info
-        req.pathInfo = path.substring(pos);
-    }
+    return  (pos > -1) ? path.substring(pos + fragment.length) : path;
+}
+
+function shiftPath(req, remainingPath) {
+    var path = req.pathInfo;
+    // add matching pattern to script-name
+    req.scriptName += path.substring(0, path.length - remainingPath.length);
+    // ... and remove it from path-info    
+    req.pathInfo = remainingPath;
 }
 
 function splitPath(path) {
@@ -233,7 +234,7 @@ function main(path) {
         print("Usage:");
         print("", cmd, "[OPTIONS]", "[PATH]");
         print("Options:");
-        print(parser.help());
+        print(daemon.getHelp());
         require("ringo/shell").quit();
     }
 
@@ -262,6 +263,8 @@ function main(path) {
     daemon.start();
 }
 
-if (require.main == module) {
+var started; // protect against restarting on reload
+if (require.main == module && !started) {
     main();
+    started = true;
 }

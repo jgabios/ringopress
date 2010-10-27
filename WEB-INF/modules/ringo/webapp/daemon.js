@@ -3,9 +3,10 @@
  * the Apache Commons Daemon jsvc tool.
  */
 
+var objects = require('ringo/utils/objects');
 var Parser = require('ringo/args').Parser;
 var Server = require('ringo/httpserver').Server;
-var {resolveId} = require('ringo/fileutils');
+var {resolveId} = require('ringo/utils/files');
 var system = require('system');
 var log = require('ringo/logging').getLogger(module.id);
 
@@ -13,7 +14,7 @@ var options,
     server,
     parser;
 
-export('parseOptions', 'init', 'start', 'stop', 'destroy', 'getServer');
+export('init', 'start', 'stop', 'destroy', 'getServer', 'parseOptions', 'getHelp');
 
 function parseOptions(arguments, defaults) {
     // parse command line options
@@ -26,7 +27,7 @@ function parseOptions(arguments, defaults) {
     parser.addOption("p", "port", "PORT", "The TCP port to listen on (default: 80)");
     parser.addOption("s", "static-dir", "DIR", "A directory with static resources to serve");
     parser.addOption("S", "static-mountpoint", "PATH", "The URI path where ot mount the static resources");
-    // parser.addOption("v", "virtual-host", "VHOST", "The virtual host name (default: undefined)");
+    parser.addOption("v", "virtual-host", "VHOST", "The virtual host name (default: undefined)");
     parser.addOption("h", "help", null, "Print help message to stdout");
     options = parser.parse(arguments, defaults);
     if (options.port && !isFinite(options.port)) {
@@ -37,6 +38,10 @@ function parseOptions(arguments, defaults) {
         options.port = port;
     }
     return options;
+}
+
+function getHelp() {
+    return parser && parser.help() || "";
 }
 
 function init() {
@@ -64,7 +69,7 @@ function init() {
     }
     // pick up extra http-config from config module
     if (config.httpConfig) {
-        options = Object.merge(options, config.httpConfig);
+        options = objects.merge(options, config.httpConfig);
     }
     server = new Server(options);
 }
@@ -77,7 +82,8 @@ function start() {
     if (Array.isArray(config.static)) {
         config.static.forEach(function(spec) {
             var dir = resolveId(options.config, spec[1]);
-            server.addStaticResources(spec[0], null, dir);
+            var ctx = server.getContext(spec[0], null);
+            ctx.serveStatic(dir)
         });
     }
     server.start();

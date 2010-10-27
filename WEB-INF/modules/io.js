@@ -15,13 +15,10 @@ defineClass(org.ringojs.wrappers.Stream);
  */
 exports.Stream = Stream;
 
-/** @ignore Narwhal compatibility */
+/** @ignore provides Narwhal compatibility */
 exports.IO = Stream;
 
-var InputStreamReader = java.io.InputStreamReader,
-    BufferedReader = java.io.BufferedReader,
-    OutputStreamWriter = java.io.OutputStreamWriter,
-    BufferedWriter = java.io.BufferedWriter;
+var {InputStreamReader, BufferedReader, OutputStreamWriter, BufferedWriter} = java.io;
 
 /**
  * Reads from all data available from this stream and writes the result to the
@@ -410,7 +407,7 @@ exports.TextStream = function TextStream(io, charset, buflen) {
      * This is a non-standard extension, not part of CommonJS IO/A.
      */
     this.writeLines = function (lines) {
-        lines.forEach(this.writeLine);
+        lines.forEach(this.writeLine, this);
         return this;
     };
 
