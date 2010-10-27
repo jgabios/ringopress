@@ -1,0 +1,13 @@
+<% extends ./base.html %>
+<% subskin content %>
+
+<h1> Add/edit Post </h1>
+<form name="blogpost" action="<% href %>" method="POST">
+    <input type="hidden" name="id" value="<% post._id %>"/>
+    <h3>Title</h3>
+    <input type="text" name="title" size="30" value="<% post.title %>"><br/>
+    <h3>Text</h3>
+    <textarea name="text" cols="50" rows="20"><% post.text %></textarea>
+<br/>
+<input type="submit" name="Save" value="save"/>
+</form>
