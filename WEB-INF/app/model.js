@@ -42,3 +42,6 @@ Comment.prototype.getFormattedCreationTime = function(){
 Comment.prototype.getCommentText = function(){
     return this.comment.replace(/\n{1,2}/g,'<br/>');
 }
+Comment.prototype.getGravatarHash = function(){
+    return ringoString.digest(this.email.replace(/^\s+|\s+$/g, '').toLowerCase());
+}
