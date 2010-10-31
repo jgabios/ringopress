@@ -12,6 +12,11 @@ Post.prototype.getCommentsCount = function(){
     return Comment.query('_id').equals('postid',this._id).equals('spam',false).select().length;
 }
 
+Post.prototype.getCommentsCountText = function(){
+    var numberOfComments = Comment.query('_id').equals('postid',this._id).equals('spam',false).select().length;
+    return numberOfComments+(numberOfComments==1 ? ' comment ' : ' comments ');
+}
+
 Post.prototype.getShortDescription = function(){
     return ringoString.stripTags(this.text.substring(0,332))+' ...';
 }

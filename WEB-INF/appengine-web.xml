@@ -1,7 +1,7 @@
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
   <!-- Replace this with your application id from http://appengine.google.com -->
-	<application>ringojsblog</application>
-	<version>0-2</version>
+	<application>jajabash</application>
+	<version>1-1</version>
 	
 	<!-- Configure java.util.logging -->
 	<system-properties>

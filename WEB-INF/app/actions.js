@@ -31,6 +31,10 @@ exports.index = function (req) {
     });
 }
 
+/**
+ * this function must be deleted after you do your initial import
+ * you can use ro.rinfopress.WordpressImporter to import your wordpress
+ */
 exports.importPosts = function(req){
     if(!req.isGet){
         if(req.params["post"]=="true"){
@@ -48,6 +52,7 @@ exports.importPosts = function(req){
             }
             comment['postid'] = req.session.data["postId"];
             comment['createTime'] = new Date(parseInt(req.params['creationDate']));
+            comment.spam=false;
             comment.save();
         }
     }
@@ -77,7 +82,7 @@ exports.post = function (req,url){
         emailBody += 'http://bash.editia.info'+req.pathDecoded+' - '+post.title+'\r\n';
         emailBody += 'author: '+comment.author+' [ '+comment.email+' ] from '+comment.website+'\r\n-----------------------\r\n';
         emailBody += comment.comment;
-        mail.gsend({from: 'jajalinux@gmail.com', to: 'jajalinux@gmail.com',text: emailBody,subject: 'new comment from '+comment.author});
+        mail.gsend({from: CONSTANTS.EMAIL, to: CONSTANTS.EMAIL,text: emailBody,subject: 'new comment from '+comment.author});
     }
     var comments = model.Comment.query().equals('postid',post._id).equals('spam',false).orderBy('createTime','desc').select();
     return Response.skin('skins/post.html',{
@@ -102,4 +107,20 @@ exports.feed = function(){
     });
     response.contentType='text/xml';
     return response;
+}
+/**
+ * this will be implemented when i will switch to appenginejs
+ */
+exports.testemail = function(){
+    var EmailMessage = require("mail").EmailMessage;
+
+    new EmailMessage({
+        sender: "from@gmail.com",
+        to: "to@gmail.com",
+        subject: "My email test",
+        body: 'test'
+    }).send();
+    return Response.skin('skins/import.html',{
+        sessData: 'ok'
+    });
 }

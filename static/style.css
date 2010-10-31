@@ -194,7 +194,7 @@ form {
 }
 
 .comment {
-    text-align: left;
+    margin-bottom: 32px;
 }
 
 .adminComment {
@@ -205,4 +205,8 @@ form {
 .spam {
     background-color: #ff3333;
     color: #FFF;
+}
+
+img {
+    border: none;
 }
