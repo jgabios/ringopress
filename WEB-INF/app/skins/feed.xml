@@ -9,10 +9,10 @@
 	>
 
 <channel>
-	<title><% title %></title>
-	<atom:link href="http://www.jlin.ro/feed" rel="self" type="application/rss+xml" />
-	<link>http://www.jlin.ro</link>
-	<description>javascript adventures</description>
+	<title><% page.title %></title>
+	<atom:link href="http://<% domain %>/feed" rel="self" type="application/rss+xml" />
+	<link>http://<% domain %></link>
+	<description><% blog.description%></description>
 	<lastBuildDate><% lastBuildDate %></lastBuildDate>
 
 	<generator>ringojs custom js code</generator>
@@ -26,8 +26,8 @@
 <% subskin 'xmlpostskin'%>
 <item>
     <title><% post.title %></title>
-    <link>http://www.jlin.ro/post?postid=<% post._id %></link>
-    <guid>http://www.jlin.ro/post?postid=<% post._id %></guid>
-    <comments>http://www.jlin.ro/post?postid=<% post._id %>#comments</comments>
+    <link>http://<% domain %>/post/<% post.url %></link>
+    <guid>http://<% domain %>/post/<% post.url %></guid>
+    <comments>http://<% domain %>/post/<% post.url %>#comments</comments>
     <description><% post.getShortDescription() %></description>
     </item>

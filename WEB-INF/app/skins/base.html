@@ -2,8 +2,9 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><% title %></title>
+<title><% page.title %></title>
 <link rel="stylesheet" href="/static/style.css" />
+<% render 'skins/ga.js' %>
 </head>
 <body>
     <div id="container">
@@ -15,8 +16,8 @@
                     <li><a href="/contact" class="menulink">contact</a></li>
                 </ul>
             </div>
-            <h1>Munteanu Gabriel</h1>
-            <h3>javascripter</h3>
+            <h1><% blog.name %></h1>
+            <h3><% blog.description %></h3>
             <div class="clearer"> </div>
         </div>
         <div id="content">
@@ -27,4 +28,4 @@
 </html>
 
 <% subskin content %>
-Overwrite this subskin to add content.
+BLOG

@@ -1,4 +1,6 @@
 
 exports.EMAIL='you@gmail.com';
-exports.BLOG_TITLE = 'Munteanu Gabriel - javascripter';
+var BLOG_NAME = exports.BLOG_NAME = 'Munteanu Gabriel';
+var BLOG_DESCRIPTION = exports.BLOG_DESCRIPTION = 'javascripter';
+exports.BLOG_TITLE = BLOG_NAME + ' - ' + BLOG_DESCRIPTION;
 exports.POSTS_PER_PAGE = 5;

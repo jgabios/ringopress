@@ -22,8 +22,8 @@ exports.index = function (req) {
     var showPrevious = next >= 1;
     return Response.skin('skins/index.html', {
         posts: model.Post.query().limit(CONSTANTS.POSTS_PER_PAGE).offset(next*CONSTANTS.POSTS_PER_PAGE).orderBy('createTime','desc').select(),
-        content: 'gogo',
-        title: CONSTANTS.BLOGTITLE,
+        page: {title: CONSTANTS.BLOG_TITLE},
+        blog: {name: CONSTANTS.BLOG_NAME,description: CONSTANTS.BLOG_DESCRIPTION},
         next: ++next,
         prev: prev,
         showNext: showNext,
@@ -78,14 +78,17 @@ exports.post = function (req,url){
         else
             comment.spam=false;
         comment.save();
-        emailBody = 'you got a new comment on your post:\r\n';
-        emailBody += 'http://bash.editia.info'+req.pathDecoded+' - '+post.title+'\r\n';
+        var emailBody = 'you got a new comment on your post:\r\n';
+        emailBody += 'http://'+req.host+req.pathDecoded+' - '+post.title+'\r\n';
         emailBody += 'author: '+comment.author+' [ '+comment.email+' ] from '+comment.website+'\r\n-----------------------\r\n';
-        emailBody += comment.comment;
+        emailBody += comment.comment+'\r\n';
+        emailBody += 'go here to manage it: http://'+req.host+'/admin/comments/';
         mail.gsend({from: CONSTANTS.EMAIL, to: CONSTANTS.EMAIL,text: emailBody,subject: 'new comment from '+comment.author});
     }
     var comments = model.Comment.query().equals('postid',post._id).equals('spam',false).orderBy('createTime','desc').select();
     return Response.skin('skins/post.html',{
+        page: {title: CONSTANTS.BLOG_TITLE+' '+post.title},
+        blog: {name: CONSTANTS.BLOG_NAME,description: CONSTANTS.BLOG_DESCRIPTION},
         post: post,
         comments: comments
     });
@@ -93,15 +96,18 @@ exports.post = function (req,url){
 
 exports.contact = function () {
     return Response.skin('skins/contact.html', {
-        title: CONSTANTS.BLOG_TITLE+' - contact me'
+        page: {title: CONSTANTS.BLOG_TITLE+' - contact me'},
+        blog: {name: CONSTANTS.BLOG_NAME,description: CONSTANTS.BLOG_DESCRIPTION}
     });
 }
 
-exports.feed = function(){
+exports.feed = function(req){
     var posts = model.Post.query().limit(10).orderBy('createTime','desc').select();
     var lastNewsTime = ringoDate.format(posts[0].createTime,'EEE, dd MMM yyyy HH:mm:ss Z');
     var response = Response.skin('skins/feed.xml', {
-        title: CONSTANTS.BLOG_TITLE,
+        page: {title: CONSTANTS.BLOG_TITLE},
+        blog: {name: CONSTANTS.BLOG_NAME,description: CONSTANTS.BLOG_DESCRIPTION},
+        domain: req.host,
         lastBuildDate: lastNewsTime,
         posts: posts
     });
