@@ -140,12 +140,12 @@ function getAction(req, module, urlconf, remainingPath, args) {
                 if (typeof action == "function") {
                     // If the request path contains additional elements check whether the
                     // candidate function has formal arguments to take them
-                    if (path.length <= 1 || args.length + path.length - 1 <= action.length) {
+                    //if (path.length <= 1 || args.length + path.length - 1 <= action.length) {
                         shiftPath(req, remainingPath);
                         shiftPath(req, getRemainingPath(req, name));
                         Array.prototype.push.apply(args, path.slice(1));
                         return action;
-                    }
+                    //}
                 }
             }
             // no matching action, fall back to "index"
