@@ -1,1 +1,1 @@
-exports = require('actionManager.js').getActions(['index','post','contact','feed'],'actions/');
+exports = require('actionManager.js').getActions(['index','post','contact','feed','importWordpress'],'actions/');

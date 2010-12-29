@@ -1,4 +1,4 @@
-package ro.ringopress;
+package org.ringopress;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -24,13 +24,16 @@ public class WordpressImporter {
     static String sessionCookie = null;
 
     public static void main(String[] args) {
+        if(args.length!=5){
+           System.out.println("usage: java -cp ./:pathtomysqllib.jar org.ringopress.WordpressImporter MYSQLHOST MYSQLDBNAME MYSQLUSER MYSQLPASSWD RINGOPRESSIMPORTURL");
+        }
         try {
             Class.forName("com.mysql.jdbc.Driver");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(WordpressImporter.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
-            Connection conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1/bash?" + "user=root&password=&dumpQueriesOnException=true&characterEncoding=UTF-8");
+            Connection conn = DriverManager.getConnection("jdbc:mysql://"+args[0]+"/"+args[1]+"?" + "user="+args[2]+"&password="+args[3]+"&dumpQueriesOnException=true&characterEncoding=UTF-8");
 
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("select post_title,post_content,post_date,ID from b2_netposts where post_status='publish'");
@@ -41,7 +44,7 @@ public class WordpressImporter {
                 postContent = postContent.replaceAll("\n{1,2}", "<br/>");
                 Timestamp postDate = rs.getTimestamp("post_date");
                 Integer postId = rs.getInt("ID");
-                postData("post=true&title=" + URLEncoder.encode(postTitle,"UTF-8") + "&text=" + URLEncoder.encode(postContent,"UTF-8") + "&creationDate=" + postDate.getTime());
+                postData("post=true&title=" + URLEncoder.encode(postTitle,"UTF-8") + "&text=" + URLEncoder.encode(postContent,"UTF-8") + "&creationDate=" + postDate.getTime(),args[4]);
                 Statement stComment = conn.createStatement();
                 ResultSet rsComment = stComment.executeQuery("select comment_author,comment_author_email,comment_date,comment_author_url,comment_content from b2_netcomments where comment_approved = 1 and comment_post_ID = " + postId);
                 while (rsComment.next()) {
@@ -50,7 +53,7 @@ public class WordpressImporter {
                     String authorURL = rsComment.getString("comment_author_url");
                     String comment = rsComment.getString("comment_content");
                     Timestamp t1 = rsComment.getTimestamp("comment_date");
-                    postData("comment"+"="+URLEncoder.encode(comment,"UTF-8")+"&author"+"=" + URLEncoder.encode(author,"UTF-8") + "&email"+"=" + URLEncoder.encode(authorEmail,"UTF-8") + "&website"+"=" + URLEncoder.encode(authorURL,"UTF-8") + "&creationDate"+"=" + t1.getTime());
+                    postData("comment"+"="+URLEncoder.encode(comment,"UTF-8")+"&author"+"=" + URLEncoder.encode(author,"UTF-8") + "&email"+"=" + URLEncoder.encode(authorEmail,"UTF-8") + "&website"+"=" + URLEncoder.encode(authorURL,"UTF-8") + "&creationDate"+"=" + t1.getTime(),args[4]);
                 }
                 rsComment.close();
                 stComment.close();
@@ -66,9 +69,9 @@ public class WordpressImporter {
 
     }
 
-    public static void postData(String data) {
+    public static void postData(String data,String url) {
         BrowserLocationer browser = new BrowserLocationer();
-        browser.setConnectionFromURL("http://jajabash.jlin.ro/importPosts");
+        browser.setConnectionFromURL(url);
         browser.setContentType("application/x-www-form-urlencoded");
         if(sessionCookie!=null){
             browser.setCookieHeader(sessionCookie);
