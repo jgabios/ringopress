@@ -1,0 +1,224 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    background: #F90000;
+}
+
+h3 {
+    margin: 0;
+    padding: 0;
+    color: #000;
+}
+
+h1 {
+    margin: 20px 0px 0px 0px;
+    padding: 0;
+    color: #000;
+}
+
+h2 {
+    font-size: 19px;
+    margin: auto auto 0 auto;
+}
+
+.subTitle {
+    color: #111;
+    margin-bottom: 8px;
+}
+#container {
+    margin: 10px auto 0px auto;
+    width: 60%;
+    background-color: #FFF;
+    padding: 0px;
+    border: 1px solid #CCC;
+    color: #111;
+    font-size: 14px;
+}
+
+#header {
+    margin-bottom: 10px;
+    padding: 10px 25px;
+    text-align: left;
+}
+
+#menu {
+    float: right;
+    text-align: right;
+}
+
+#menu ul {
+    list-style: none;
+}
+
+#menu ul li {
+    margin: 0px 5px 0px 0px;
+    border-bottom: 1px solid #CCC;
+}
+
+#content {
+    margin: 10px;
+    padding: 10px 45px;
+}
+
+.post {
+    text-align: left;
+    padding-bottom: 15px;
+    color: #717171;
+    border-bottom: 1px solid #CCC;
+    margin: 20px 0px 5px 0px;
+    font-size: 13px;
+}
+
+.post a.title {
+    color: #FF6600;
+    text-decoration: none;
+}
+
+.post a.title:hover {
+    color: #000;
+}
+
+.post a {
+        font-size: 13px;
+        text-decoration: underline;
+        color: #FF6600;
+}
+
+.post a.visited {
+        font-size: 13px;
+        text-decoration: none;
+        color: #030303;
+}
+
+/*
+.post hr {
+    width: 50%;
+    height: 1px;
+border-style: none;
+color: #89C2DF;
+background-color: #89C2DF;
+}
+*/
+#post {
+    text-align: left;
+    margin: 5px 5px 25px 5px;
+}
+
+#post h1 {
+    color: #FF6600;
+    font-size: 25px;
+}
+
+#post h1 span{
+    color: #000;
+    font-size: 24x;
+}
+
+.clearer {
+    clear: both;
+}
+
+.menulink {
+    text-decoration: none;
+    color: #333;
+}
+
+.menulink:visited {
+    color: #333;
+}
+
+.menulink:hover {
+    color: #000;
+}
+
+.formFirstColumn {
+    float: left;
+    text-align: right;
+    width: 63px;
+    margin: 5px;
+}
+
+.formSecondColumn {
+    float: left;
+    text-align: left;
+    width: 40%;
+    margin: 5px;
+}
+
+#comments {
+    text-align: left;
+    padding: 14px 0px 1px 10px;
+    border-top: 1px solid #CCC;
+    margin-bottom: 15px;
+}
+
+.lefty {
+    float: left;
+}
+
+.righty {
+    float: right;
+}
+
+input, textarea {
+    border: 1px solid #D1D1D1;
+}
+
+hr {
+    border: none 0;
+    border-top: 1px solid #CCC;
+    height: 1px;
+}
+
+a {
+    text-decoration: none;
+    font-size: 15px;
+    color: #00F;
+}
+
+a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+a:visited {
+    color: #00F;
+}
+
+a.commentsTitle {
+    font-size: 16px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.commentText {
+    margin: 5px 1px;
+}
+
+form {
+    margin: 0px;
+    padding: 0px;
+}
+
+.commentFormTitle {
+    text-align: left;
+}
+
+.comment {
+    margin-bottom: 32px;
+}
+
+.adminComment {
+    text-align: left;
+    border-bottom: 1px solid #CCC;
+}
+
+.spam {
+    background-color: #ff3333;
+    color: #FFF;
+}
+
+img {
+    border: none;
+}

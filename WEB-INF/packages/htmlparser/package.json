@@ -1,0 +1,10 @@
+{
+    "name": "htmlparser",
+    "description": "An HTML parser",
+    "keywords": ["html", "parser", "dom"],
+    "author": "George Moschovitis (http://www.gmosx.com/)",
+    "contributors": [],
+    "lib": ["lib"],
+    "jars": ["engines/rhino/jars/htmlparser.jar"],
+    "lean": ["lib", "engines"] 
+}

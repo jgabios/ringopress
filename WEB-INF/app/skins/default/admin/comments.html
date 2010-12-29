@@ -1,0 +1,34 @@
+<% extends ./base.html %>
+
+<% subskin content %>
+<a href="/admin/">Posts</a> Comments
+<% for comment in <% comments %> render 'commentskin' %>
+
+<div class="nav"><% if <% showPrevious %> render 'previousButton' %> <% if <% showNext %> render 'nextButton' %></div>
+<div class="clearer"></div>
+
+<% subskin 'commentskin' %>
+<% if <% comment.spam %> render 'commentSpam' %>
+<% if not <% comment.spam %> render 'commentOK' %>
+
+<% subskin 'commentOK' %>
+<div class="adminComment">
+    <span class="lefty"><% comment.author %> [<% comment.email %> ]</span> <span class="righty"><a href="/admin/comments/?action=delete&id=<% comment._id %>">delete</a>  | <a href="/admin/comments?action=spam&id=<% comment._id %>">spam</a></span>
+    <br/>
+    <div class="commentText"><% comment.comment %></div>
+</div>
+<div class="clearer"> </div>
+
+<% subskin 'commentSpam' %>
+<div class="adminComment spam">
+    <span class="lefty"><% comment.author %> [<% comment.email %> ]</span> <span class="righty"><a href="/admin/comments/?action=delete&id=<% comment._id %>">delete</a>  | <a href="/admin/comments?action=unspam&id=<% comment._id %>">un-spam</a></span>
+    <br/>
+    <div class="commentText"><% comment.comment %></div>
+</div>
+<div class="clearer"> </div>
+
+<% subskin 'nextButton' %>
+<div class="righty"><a href="?next=<% next %>">Older</a></div>
+
+<% subskin 'previousButton' %>
+<div class="lefty"><a href="?next=<% prev %>">Newer</a></div>

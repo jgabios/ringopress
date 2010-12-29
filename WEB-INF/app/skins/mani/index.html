@@ -1,0 +1,35 @@
+<% extends ./base.html %>
+
+<% subskin content %>
+<% for post in <% posts %> render 'postskin' %>
+<div class="nav"><% if <% showPrevious %> render 'previousButton' %> <% if <% showNext %> render 'nextButton' %></div>
+<div class="clearer"></div>
+<link href="/static/lighter/Flame.git.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="/static/js/mootools.js"></script>
+<script type="text/javascript" src="/static/js/lighter/lighter.js"></script>
+<script type="text/javascript">
+    $$('code').each(function(element) {
+    var lighter = new Lighter(element, {
+        altLines: 'odd',
+        container: element,
+        flame: 'git',
+        mode: 'ol'
+    });
+})
+</script>
+
+<% subskin 'postskin' %>
+<div class="post">
+    <!--<hr noshade align="left"/>-->
+   <h2><a class="title" href="/post/<% post.url %>"><% post.title %></a></h2>
+   <div class="subTitle">[<% post.getCommentsCountText() %>] posted on <% post.getFormattedCreationTime() %></div>
+   <div>
+    <% post.text %>
+   </div>
+</div>
+
+<% subskin 'nextButton' %>
+<div class="righty"><a href="?next=<% next %>">Older</a></div>
+
+<% subskin 'previousButton' %>
+<div class="lefty"><a href="?next=<% prev %>">Newer</a></div>

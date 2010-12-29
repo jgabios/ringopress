@@ -1,0 +1,7 @@
+{
+    "name": "akismet",
+    "version": "0.1",
+    "description": "A lib for akismet API for ringoJS on GAE ",
+    "keywords": ["akismet", "ringo"],
+    "author": "Gabriel Munteanu (http://bash.editia.info/) <jajalinux@gmail.com>"
+}
