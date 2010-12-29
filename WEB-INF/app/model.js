@@ -8,45 +8,24 @@ var Post = config.store.defineEntity('Post');
 var Comment = config.store.defineEntity('Comment');
 var PostCounter = config.store.defineEntity('PostCounter');
 
-Post.prototype.getCommentsCount = function(){
-    return Comment.query('_id').equals('postid',this._id).equals('spam',false).select().length;
-}
-
+//// this should go to view layer
 Post.prototype.getCommentsCountText = function(){
     var numberOfComments = Comment.query('_id').equals('postid',this._id).equals('spam',false).select().length;
     return numberOfComments+(numberOfComments==1 ? ' comment ' : ' comments ');
 }
-
-Post.prototype.getShortDescription = function(){
-    return ringoString.stripTags(this.text.substring(0,332))+' ...';
-}
-
-Post.save = function(post){
-    var dateUrlPart = ringoDate.format(post.createTime,'dd-MMM-yyyy');
-    post.url = dateUrlPart+'-'+post.title.replace(/[^a-zA-Z0-9]/g,'-');
-    post.save();
-    var counter = PostCounter.query().select();
-    if(counter!=null && counter.length>0){
-        counter[0].numberOfPosts = counter[0].numberOfPosts+1;
-        counter[0].save();
-    } else {
-        counter = new PostCounter();
-        counter['numberOfPosts']=1;
-        counter.save();
-    }
-}
-
+//// this should go to view layer
 Post.prototype.getFormattedCreationTime = function(){
     return ringoDate.format(this.createTime,'dd MMM yyyy');
 }
-
+//// this should go to view layer
 Comment.prototype.getFormattedCreationTime = function(){
     return ringoDate.format(this.createTime,'dd MMM yyyy - HH:mm');
 }
-
+//// this should go to view layer
 Comment.prototype.getCommentText = function(){
     return this.comment.replace(/\n{1,2}/g,'<br/>');
 }
-Comment.prototype.getGravatarHash = function(){
-    return ringoString.digest(this.email.replace(/^\s+|\s+$/g, '').toLowerCase());
+
+Post.prototype.getShortDescription = function(){
+    return ringoString.stripTags(this.text.substring(0,332))+' ...';
 }

@@ -27,3 +27,8 @@ exports.urls = [
     ['/admin','adminactions'],
     ['/', 'actions']
 ];
+
+exports.akismet = {
+    apikey: 'c6d7c4b48897',
+    blog: 'http://bash.editia.info'
+}

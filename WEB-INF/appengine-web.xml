@@ -12,5 +12,6 @@
 	<static-files>
 		<include path="/static/**"/>
                 <include path="/favicon.ico"/>
+		<include path="/robots.txt"/>
 	</static-files>
 </appengine-web-app>

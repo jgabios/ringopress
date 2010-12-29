@@ -30,7 +30,9 @@ function render(skinOrResource, context) {
         if (skinOrResource.indexOf('#') > -1) {
             [skinOrResource, subskin] = skinOrResource.split('#');
         }
-        var resource = this.getResource(skinOrResource);
+// using this.getResource() if available allows as to get relative resources
+        var resource = typeof this.getResource === "function" ?
+                this.getResource(skinOrResource) : getResource(skinOrResource);
         skin = createSkin(resource);
         if (subskin) {
             skin = skin.getSubskin(subskin);
@@ -170,7 +172,15 @@ function Skin(mainSkin, subSkins, parentSkin, resourceOrString) {
     };
 
     function renderInternal(parts, context) {
-        var value = [renderPart(part, context) for each (part in parts)].join('');
+	if(!parts){
+		print('ERROR parts is undefined');
+		return '';
+	}
+	var renderedParts = [];
+        for(var i=0,l=parts.length;i<l;i++){
+                renderedParts.push(renderPart(parts[i],context));
+        }
+        var value = renderedParts.join('');
         if (parts && parts.subskinFilter) {
             return evaluateFilter(value, parts.subskinFilter, context);
         }
@@ -302,9 +312,9 @@ function Skin(mainSkin, subSkins, parentSkin, resourceOrString) {
                 subMacro.name = "for";
             }
             var result = [];
-            for (var [index, value] in list) {
-                subContext['index'] = index
-                subContext[name] = value;
+            for (var i=0,l=list ? list.length : 0;i<l;i++) {
+                subContext['index'] = i;
+                subContext[name] = list[i];
                 result.push(evaluateMacro(subMacro, subContext));
             }
             var wrapper = macro.getParameter("wrap") || macro.getParameter(name + "-wrap");

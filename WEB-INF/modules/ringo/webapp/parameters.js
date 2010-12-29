@@ -47,13 +47,16 @@ function parseParameters(bytes, params, encoding) {
         bytes = bytes.toByteArray();
     }
     encoding = encoding || "UTF-8";
-    for each (var param in bytes.split(AMPERSAND)) {
-        var [name, value] = param.split(EQUALS);
+    var parameters = bytes.split(AMPERSAND);
+    if(parameters && parameters.length>0){
+    for( var i=0,l=parameters.length;i<l;i++) {
+        var [name, value] = parameters[i].split(EQUALS);
         if (name && value) {
             name = decodeToString(name, encoding);
             value = decodeToString(value, encoding);
             mergeParameter(params, name.trim(), value);
         }
+    }
     }
 }
 
