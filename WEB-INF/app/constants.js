@@ -1,4 +1,7 @@
-
+/**
+ * @fileOverview provides constants used throughout the app
+ * 
+*/
 exports.EMAIL='you@gmail.com';
 var BLOG_NAME = exports.BLOG_NAME = 'Your name';
 var BLOG_DESCRIPTION = exports.BLOG_DESCRIPTION = 'your description';
