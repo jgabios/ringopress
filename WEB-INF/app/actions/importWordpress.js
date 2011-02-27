@@ -3,7 +3,7 @@
  * this file must be deleted after you do your initial import
  * you can use ro.rinfopress.WordpressImporter to import your wordpress posts into ringopress
  * usage: java -cp ./:pathtomysqllib.jar org.ringopress.WordpressImporter MYSQLHOST MYSQLDBNAME MYSQLUSER MYSQLPASSWD RINGOPRESSIMPORTURL
- * RINGOPRESSIMPORTURL must point to this ation below
+ * RINGOPRESSIMPORTURL must point to this action below
  *
  */
 

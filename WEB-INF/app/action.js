@@ -45,6 +45,7 @@ exports.action = function(config){
     var skin = settings.themeFolder+config.skin;
     var html;
     return function(req,url){
+        var initialContext = ObjectUtil.clone(defaultContext);
         var resp = new Response();
         var env = {
             req: req,
@@ -52,7 +53,7 @@ exports.action = function(config){
             url: url,
             settings: settings
         }
-        var context = ObjectUtil.merge(config.getContext(env),defaultContext);
+        var context = ObjectUtil.merge(config.getContext(env),initialContext);
 
         if(!context.status){
             html = Skin.render(skin,context);

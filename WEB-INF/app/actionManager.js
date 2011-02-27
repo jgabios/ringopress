@@ -18,7 +18,7 @@ exports.getActions = function(actions,folder){
         var actionFolderFiles = fs.list(fs.workingDirectory()+'/WEB-INF/app/'+folder);
         for(var i=0,l=actionFolderFiles.length;i<l;i++){
             if(strings.endsWith(actionFolderFiles[i],'.js')){
-                var actionName = actionModules[i].replace('.js','').toLowerCase();
+                var actionName = actionFolderFiles[i].replace('.js','').toLowerCase();
                 actions.push(actionName);
             }
         }
