@@ -1,1 +1,1 @@
-exports = require('actionManager.js').getActions(['index','comments','edit','create'],'actions/admin/');
+exports = require('actionManager.js').getActions(null,'actions/admin/');

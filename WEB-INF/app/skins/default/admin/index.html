@@ -1,20 +1,4 @@
 <% extends ./base.html %>
 
 <% subskin content %>
-Posts <a href="/admin/comments">Comments</a>
-Add new post:  <a href="/admin/create">create</a>
-<% for post in <% posts %> render 'postskin' %>
-
-<div class="nav"><% if <% showPrevious %> render 'previousButton' %> <% if <% showNext %> render 'nextButton' %></div>
-<div class="clearer"></div>
-
-<% subskin 'postskin' %>
-<div class="post">
-    <a href="/post/<% post.url %>" target="_blank"><% post.title %></a> [<% post.getCommentsCountText() %>] | <a href="/admin/?id=<% post._id %>">delete</a>  | <a href="/admin/edit?id=<% post._id %>">edit</a>
-</div>
-
-<% subskin 'nextButton' %>
-<div class="righty"><a href="?currentPage=<% next %>">Older</a></div>
-
-<% subskin 'previousButton' %>
-<div class="lefty"><a href="?currentPage=<% prev %>">Newer</a></div>
+Ringopress version: <% version %>

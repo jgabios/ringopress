@@ -2,14 +2,31 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><% title %></title>
-<link rel="stylesheet" href="/static/style.css" />
+<title><% page.title %> - ADMIN</title>
+<link rel="stylesheet" href="/static/admin/style.css" />
 </head>
 <body>
     <div id="container">
-        <div id="content">
+      <div id="menubar" class="lefty">
+        <ul>
+          <li>
+            <a href="/admin/">Dashboard</a>
+          </li>
+          <li>
+            <a href="/admin/posts">Posts</a>
+          </li>
+          <li>
+            <a href="/admin/comments">Comments</a>
+          </li>
+          <li>
+            <a href="/admin/plugins">Plugins</a>
+          </li>
+        </ul>
+      </div>
+        <div id="content" class="lefty">
             <% render content %>
         </div>
+      <div class="clearer"> </div>
     </div>
 </body>
 </html>

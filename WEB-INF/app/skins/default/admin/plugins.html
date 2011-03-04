@@ -1,0 +1,11 @@
+<% extends ./base.html %>
+
+<% subskin content %>
+Plugins
+<% for plugin in <% plugins %> render 'pluginskin' %>
+
+<% subskin 'pluginskin' %>
+<div class="plugin">
+    <span><% plugin.name %> </span> <a href="/admin/plugins/?action=activate&id=<% plugin.id %>">Activate</a>  | <a href="/admin/plugins/?action=deactivate&id=<% plugin.id %>">Deactivate</a>
+</div>
+<div class="clearer"> </div>
