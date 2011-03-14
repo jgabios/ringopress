@@ -187,7 +187,16 @@ Object.defineProperty(HTMLElement.prototype, "innerHTML", {
         return String(this._raw.getTextContent());
     },
     set: function(content) {
-        return String(this._raw.setTextContent(content));
+	var doc = this._raw.getOwnerDocument();
+	var fragment = jparser.parseFragment(new JInputSource(new JStringReader(content)),'div');
+	var frag = doc.adoptNode(fragment);
+	var kids = this._raw.getChildNodes();
+	var numberOfKids = kids.getLength();
+	for(var i=0;i<numberOfKids;i++){
+	    this._raw.removeChild(kids.item(i));
+	}
+        this._raw.appendChild(frag);
+        return "setInnerHTML";
     }    
 });
 
