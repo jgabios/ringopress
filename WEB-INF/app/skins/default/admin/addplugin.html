@@ -1,0 +1,17 @@
+<% extends ./base.html %>
+<% subskin content %>
+
+<h1> Add Plugin </h1>
+<form name="plugin" action="<% href %>" method="POST">
+    <h3>Name</h3>
+    <input type="text" name="name" size="30" value="<% plugin.name %>"><br/>
+    <h3>Code</h3>
+    <textarea name="code" cols="80" rows="25"><% plugin.code %></textarea><br/>
+    <h3>Author</h3>
+    <input type="text" name="author" size="30" value="<% plugin.author %>"><br/>
+    <h3>Version</h3>
+    <input type="text" name="version" size="30" value="<% plugin.version %>"><br/>
+    <h3>Email</h3>
+    <input type="text" name="email" size="30" value="<% plugin.email %>"><br/>
+    <input type="submit" name="Save" value="save"/>
+</form>

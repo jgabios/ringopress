@@ -1,8 +1,11 @@
 var config = require('config');
 var ringoDate = require('ringo/utils/dates');
 var ringoString = require('ringo/utils/strings');
+var db = require("google/appengine/ext/db");
 
-export('Post','Comment','PostCounter');
+// maybe i will go full appenginejs low-level GDS with the entities and persistence
+// for now, only the plugins stored in the db will be GDS [google datastore]
+export('Post','Comment','PostCounter','Plugin');
 
 var Post = config.store.defineEntity('Post');
 var Comment = config.store.defineEntity('Comment');
@@ -29,3 +32,13 @@ Comment.prototype.getCommentText = function(){
 Post.prototype.getShortDescription = function(){
     return ringoString.stripTags(this.text.substring(0,332))+' ...';
 }
+
+var Plugin = db.Model("plugin", {
+    code: new db.TextProperty(),
+    lastModified: new db.DateProperty(),
+    name: new db.StringProperty(),
+    version: new db.StringProperty(),
+    author: new db.StringProperty(),
+    email: new db.StringProperty(),
+    activated: new db.BooleanProperty
+});

@@ -23,9 +23,9 @@ var createedit = function(env){
         bizpost.savePost(post);
         return {
             status: 'redirect',
-            url: '/admin'
+            url: '/admin/posts'
         };
-    };
+    }
 }
 exports.create = createedit;
 exports.edit = createedit;
