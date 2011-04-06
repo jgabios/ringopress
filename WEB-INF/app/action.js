@@ -71,9 +71,11 @@ exports.action = function(config){
         var document = parser.parse(html);
         env.document = document;
         for(var plugin in settings.pluginManager.plugins){
-            var renderFunction = settings.pluginManager.plugins[plugin].render;
-            if(renderFunction && (renderFunction instanceof Function))
-                renderFunction(context,env);
+            if(plugin.activated){
+              var renderFunction = settings.pluginManager.plugins[plugin].render;
+              if(renderFunction && (renderFunction instanceof Function))
+                  renderFunction(context,env);
+            }
         }
         env.resp.write(env.document.toHTML());
         return resp;

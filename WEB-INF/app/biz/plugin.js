@@ -10,4 +10,12 @@ var getPlugins = function(){
     return model.Plugin.all().fetch();
 }
 
+var getPluginById = function(id){
+  return model.Plugin.get(id);
+}
+
+var getPluginByName = function(name) {
+  return model.Plugin.get().filter('name=',name);
+}
+
 exports.admin = require('biz/lib/simplemoduleexport').simpleexport(this);

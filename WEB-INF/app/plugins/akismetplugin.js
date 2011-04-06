@@ -1,5 +1,9 @@
 
 exports.plugin = {
+    version: '0.2',
+    author: 'mama',
+    email: 'example@domain.com',
+    activatedByDefault: true,
     hook: 'saveComment',
     workBefore: function(args){
         var akismet = require('akismet');
@@ -16,7 +20,6 @@ exports.plugin = {
             comment: comment.comment
         });
         var comment = args.arguments[0];
-        print('found '+comment.comment+' spam = '+isSpam);
         comment.spam = isSpam;
     }
 };
