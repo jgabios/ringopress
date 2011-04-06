@@ -15,8 +15,6 @@ exports.plugin = {
             authorURL: comment.website,
             comment: comment.comment
         });
-        var comment = args.arguments[0];
-        print('found '+comment.comment+' spam = '+isSpam);
         comment.spam = isSpam;
     }
 };

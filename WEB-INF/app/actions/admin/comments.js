@@ -1,3 +1,10 @@
+
+/**
+ * @fileOverview listing the comments action
+ * it also manages the actions that can be done to a comment:
+ * delete/ mark as spam/notspam
+ */
+
 var bizcomment = require('biz/comment.js').admin;
 
 exports.action = require('action').action({

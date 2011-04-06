@@ -1,3 +1,8 @@
+
+/**
+ * @fileOverview add plugin action
+ */
+
 var bizplugin = require('biz/plugin.js').admin;
 var model = require('model');
 

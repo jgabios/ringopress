@@ -1,7 +1,7 @@
 
 /**
  * @fileOverview provides {@link action} function that is used
- * in all actions used in the site.
+ * in all actions throughout the site.
  * settings and defaultContext, that all actions use, are declared and initialized
  * 
  */
