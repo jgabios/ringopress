@@ -15,7 +15,7 @@ var getPluginById = function(id){
 }
 
 var getPluginByName = function(name) {
-  return model.Plugin.get().filter('name=',name);
+  return model.Plugin.all().filter('name=',name).fetch(1);
 }
 
 exports.admin = require('biz/lib/simplemoduleexport').simpleexport(this);

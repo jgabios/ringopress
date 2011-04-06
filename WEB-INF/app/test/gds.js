@@ -6,12 +6,21 @@
  * - appengine-api-stubs.jar from APPENGINE_SDK_HOME/lib/impl/appengine-api-stubs.jar
  * - appengine-testing.jar from APPENGINE_SDK_HOME/lib/testing/appengine-testing.jar
  */
-
+require('ringo/engine').addRepository("./");
 var localServiceTestHelper = com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 var localDBTestConfig = com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
-var helper = new localServiceTestHelper(new localDBTestConfig());
+var nsManager = com.google.appengine.api.NamespaceManager;
+var dbConfig = new localDBTestConfig();
+dbConfig.setNoStorage(false);
+dbConfig.setNoIndexAutoGen(true);
+dbConfig.setBackingStoreLocation('/home/gmunteanu/rp/ringopress/WEB-INF/appengine-generated/local_db.bin');
+var helper = new localServiceTestHelper(dbConfig);
 helper.setUp();
+print(nsManager+' -- '+nsManager.getGoogleAppsNamespace());
+nsManager.set(nsManager.getGoogleAppsNamespace());
+helper.setEnvAppId("jajabash");
+helper.setEnvAuthDomain("gmail.com");
 var m = require('model');
 var bizplugin = require('biz/plugin.js').admin;
-var plugin = bizplugin.getPluginByName('gabi');
-print(plugin.name);
+//var plugin = bizplugin.getPluginByName('akismet');
+//print(plugin.name);
