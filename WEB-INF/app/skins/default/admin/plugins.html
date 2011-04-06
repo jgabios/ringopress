@@ -6,6 +6,14 @@ Plugins <a href="/admin/addplugin">Add a new plugin</a>
 
 <% subskin 'pluginskin' %>
 <div class="plugin">
-    <span><% plugin.code %> </span> <a href="/admin/plugins/?action=activate&id=<% plugin.key() %>">Activate</a>  | <a href="/admin/plugins/?action=deactivate&id=<% plugin.key() %>">Deactivate</a>
+    <span><% plugin.code %> </span> <a href="/admin/plugins/?action=delete&id=<% plugin.key() %>">Delete</a> |
+    <% if not <% plugin.activated %> render 'activateplugin' %>
+    <% if <% plugin.activated %> render 'deactivateplugin' %>
 </div>
 <div class="clearer"> </div>
+
+<% subskin 'activateplugin' %>
+<a href="/admin/plugins/?action=activate&id=<% plugin.key() %>">Activate</a>
+
+<% subskin 'deactivateplugin' %>
+<a href="/admin/plugins/?action=deactivate&id=<% plugin.key() %>">Deactivate</a>

@@ -1,6 +1,10 @@
 
 exports.plugin = {
     hook: 'savePost',
+    version: '0.1',
+    author: 'jajalinux',
+    email: 'example@domain.com',
+    activatedByDefault: false,
     workAfter: function(args){
         var post = args.arguments[0];
         if(post && post.title)

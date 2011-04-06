@@ -20,6 +20,7 @@ exports.action = require('action').action({
             plugin['email'] = env.req.params['email'];
             plugin['author'] = env.req.params['author'];
             plugin['version'] = env.req.params['version'];
+            plugin['type'] = 'GDS';
             plugin['activated'] = false;
             var validationCode = bizplugin.savePlugin(plugin);
             if(validationCode){

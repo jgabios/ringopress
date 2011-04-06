@@ -2,6 +2,10 @@
 var sizzle = require("sizzle").sizzle;
 
 var plugin = {
+    version: '0.0.1',
+    author: 'jassux',
+    email: 'example@domain.com',
+    activatedByDefault: false,
     render: function(context,env){
         if(env.url && env.url.indexOf('wewe')!=-1){
             print('interested');

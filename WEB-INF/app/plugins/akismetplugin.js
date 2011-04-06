@@ -1,5 +1,9 @@
 
 exports.plugin = {
+    version: '0.2',
+    author: 'mama',
+    email: 'example@domain.com',
+    activatedByDefault: true,
     hook: 'saveComment',
     workBefore: function(args){
         var akismet = require('akismet');

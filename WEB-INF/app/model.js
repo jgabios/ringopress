@@ -40,5 +40,7 @@ var Plugin = db.Model("plugin", {
     version: new db.StringProperty(),
     author: new db.StringProperty(),
     email: new db.StringProperty(),
+    hook: new db.StringProperty(),
+    type: new db.StringProperty(), // file or code as blob
     activated: new db.BooleanProperty
 });
