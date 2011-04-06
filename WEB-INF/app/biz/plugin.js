@@ -15,7 +15,12 @@ var getPluginById = function(id){
 }
 
 var getPluginByName = function(name) {
-  return model.Plugin.all().filter('name=',name).fetch(1);
+  var plugin = model.Plugin.all().filter('name =',name).fetch(1);
+  if(plugin && plugin.length > 0){
+    return plugin[0];
+  } else {
+    return null;
+  }
 }
 
 exports.admin = require('biz/lib/simplemoduleexport').simpleexport(this);

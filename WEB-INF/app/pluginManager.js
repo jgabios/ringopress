@@ -10,14 +10,17 @@ var plugins = (function(){
     var gdsPlugins = bizplugin.getPlugins();
     for(i=0,l=gdsPlugins.length;i<l;i++){
             var pluginName = gdsPlugins[i]['name'].toLowerCase();
-            var obj = require(pluginName+'.gae');
-            plugins[pluginName]=obj['plugin'];
-            var hook = gdsPlugins[i]['hook'];
-            if(hook){
-                if(!hookPluginsMap[hook]){
-                    hookPluginsMap[hook]=[];
-                }
-                hookPluginsMap[hook].push(obj['plugin']);
+            var type = gdsPlugins[i]['type'];
+            if(type == 'GDS'){
+              var obj = require(pluginName+'.gae');
+              plugins[pluginName]=obj['plugin'];
+              var hook = gdsPlugins[i]['hook'];
+              if(hook){
+                  if(!hookPluginsMap[hook]){
+                      hookPluginsMap[hook]=[];
+                  }
+                  hookPluginsMap[hook].push(obj['plugin']);
+              }
             }
     }
     var pluginFolderFiles = fs.list(fs.workingDirectory()+'/WEB-INF/app/plugins');
@@ -32,15 +35,18 @@ var plugins = (function(){
                 }
                 hookPluginsMap[obj['plugin'].hook].push(obj['plugin']);
             }
-            var plugin = new model.Plugin({'keyName': pluginName});
-            plugin['lastModified'] = new Date();
-            plugin['name'] = pluginName;
-            plugin['email'] = obj['plugin'].email;
-            plugin['author'] = obj['plugin'].author;
-            plugin['version'] = obj['plugin'].version;
-            plugin['type'] = 'FILE';
-            plugin['activated'] = true;
-            bizplugin.savePlugin(plugin);
+            var plugin = bizplugin.getPluginByName(pluginName);
+            if(plugin==null){
+              plugin = new model.Plugin({'keyName': pluginName});
+              plugin['lastModified'] = new Date();
+              plugin['name'] = pluginName;
+              plugin['email'] = obj['plugin'].email;
+              plugin['author'] = obj['plugin'].author;
+              plugin['version'] = obj['plugin'].version;
+              plugin['type'] = 'FILE';
+              plugin['activated'] = true;
+              bizplugin.savePlugin(plugin);
+            }
         }
     }
     return plugins;
