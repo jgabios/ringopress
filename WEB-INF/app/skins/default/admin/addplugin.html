@@ -2,6 +2,11 @@
 <% subskin content %>
 
 <h1> Add Plugin </h1>
+<form action="<% href %>" name="pluginimport" method="POST">
+  <input type="text" size="25" name="pluginzipurl" value="http://"/>
+  <input type="submit" name="submitimport" value="Import"/>
+</form>
+
 <form name="plugin" action="<% href %>" method="POST">
     <h3>Name</h3>
     <input type="text" name="name" size="30" value="<% plugin.name %>"/><br/>
