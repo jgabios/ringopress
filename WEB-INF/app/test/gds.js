@@ -25,5 +25,5 @@ helper.setEnvAppId("jajabash");
 helper.setEnvAuthDomain("gmail.com");
 var m = require('model');
 var bizplugin = require('biz/plugin.js').admin;
-var plugin = bizplugin.getPluginByName('akismet');
-print(plugin.name);
+var plugin = bizplugin.getPluginByName('addtwiter');
+print(plugin.code);

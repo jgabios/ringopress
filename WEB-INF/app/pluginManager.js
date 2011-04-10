@@ -14,6 +14,7 @@ var plugins = (function(){
             if(type == 'GDS'){
               var obj = require(pluginName+'.gae');
               plugins[pluginName]=obj['plugin'];
+              plugins[pluginName].activated = gdsPlugins[i]['activated'];
               var hook = gdsPlugins[i]['hook'];
               if(hook){
                   if(!hookPluginsMap[hook]){
@@ -46,6 +47,8 @@ var plugins = (function(){
               plugin['type'] = 'FILE';
               plugin['activated'] = true;
               bizplugin.savePlugin(plugin);
+            } else {
+              plugins[pluginName].activated = plugin['activated'];
             }
         }
     }

@@ -71,7 +71,7 @@ exports.action = function(config){
         var document = parser.parse(html);
         env.document = document;
         for(var plugin in settings.pluginManager.plugins){
-            if(plugin.activated){
+            if(settings.pluginManager.plugins[plugin].activated){
               var renderFunction = settings.pluginManager.plugins[plugin].render;
               if(renderFunction && (renderFunction instanceof Function))
                   renderFunction(context,env);

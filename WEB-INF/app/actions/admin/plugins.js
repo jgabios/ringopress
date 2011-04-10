@@ -1,5 +1,6 @@
 var CONSTANTS = require('constants');
 var bizplugin = require('biz/plugin.js').admin;
+var pluginManager = require('pluginManager').manager;
 
 exports.action = require('action').action({
     "skin": "admin/plugins.html",
@@ -10,6 +11,7 @@ exports.action = require('action').action({
               var plugin = bizplugin.getPluginById(env.req.params['id']);
               plugin['activated'] = action=='activate';
               bizplugin.savePlugin(plugin);
+              pluginManager.plugins[plugin.name].activated = plugin.activated;
             }
             if(action.indexOf('delete')!=-1) {
               var plugin = bizplugin.getPluginById(env.req.params['id']);
