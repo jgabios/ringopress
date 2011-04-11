@@ -19,7 +19,6 @@ dbConfig.setNoIndexAutoGen(true);
 dbConfig.setBackingStoreLocation('../appengine-generated/local_db.bin');
 var helper = new localServiceTestHelper(dbConfig);
 helper.setUp();
-print(nsManager+' -- '+nsManager.getGoogleAppsNamespace());
 nsManager.set(nsManager.getGoogleAppsNamespace());
 helper.setEnvAppId("jajabash");
 helper.setEnvAuthDomain("gmail.com");

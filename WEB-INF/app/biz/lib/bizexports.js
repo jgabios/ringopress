@@ -6,7 +6,7 @@
  * the biz function runs
  */
 
-var pluginManager = require('pluginManager').manager;
+var pluginManager = require('pluginManager');
 
 exports.bizexport = function(module){
     return function(env){
@@ -25,5 +25,5 @@ exports.bizexport = function(module){
         }
     }
     return rez;
-    }
+    };
 };

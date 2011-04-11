@@ -30,6 +30,19 @@
     <div class="formSecondColumn"><input type="submit" name="Save" value="Submit comment"/></div>
     <div class="clearer"> </div>
 </form>
+<link href="/static/lighter/Flame.git.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="/static/js/mootools.js"></script>
+<script type="text/javascript" src="/static/js/lighter/lighter.js"></script>
+<script type="text/javascript">
+    $$('code').each(function(element) {
+    var lighter = new Lighter(element, {
+        altLines: 'odd',
+        container: element,
+        flame: 'git',
+        mode: 'ol'
+    });
+})
+</script>
 
 <% subskin 'commentskin' %>
 <div class="comment">
@@ -60,16 +73,3 @@
 <div id="comments">
 No comments yet.
 </div>
-<link href="/static/lighter/Flame.git.css" rel="stylesheet" type="text/css" media="screen" />
-<script type="text/javascript" src="/static/js/mootools.js"></script>
-<script type="text/javascript" src="/static/js/lighter/lighter.js"></script>
-<script type="text/javascript">
-    $$('code').each(function(element) {
-    var lighter = new Lighter(element, {
-        altLines: 'odd',
-        container: element,
-        flame: 'git',
-        mode: 'ol'
-    });
-})
-</script>

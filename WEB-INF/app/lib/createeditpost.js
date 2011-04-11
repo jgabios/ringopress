@@ -1,9 +1,9 @@
-var bizpost = require('biz/post.js').admin;
+var bizpost = require('biz/post.js');
 
 var createedit = function(env){
     var post = null;
     if(env.req.params['id'])
-        post = bizpost.getPostById(env.req.params['id']);
+        post = bizpost(env).getPostById(env.req.params['id']);
     if(env.req.isGet){
         if(post){
             return {
@@ -14,13 +14,13 @@ var createedit = function(env){
     }
     if(env.req.isPost){
         if(!post){
-            post = bizpost.createNewPost();
+            post = bizpost(env).createNewPost();
         } else {
             post['updateTime'] = new Date();
         }
         post['text'] = env.req.params['text'];
         post['title'] = env.req.params['title'];
-        bizpost.savePost(post);
+        bizpost(env).savePost(post);
         return {
             status: 'redirect',
             url: '/admin/posts'

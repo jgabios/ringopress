@@ -5,6 +5,7 @@
 
 var bizplugin = require('biz/plugin.js').admin;
 var model = require('model');
+var pluginManager = require('pluginManager');
 
 exports.action = require('action').action({
     "skin": "admin/addplugin.html",
@@ -20,10 +21,8 @@ exports.action = require('action').action({
               var stream = new java.io.ByteArrayInputStream(pluginZipResource.content.toByteArray());
               var entryGenerator = require('ringo/zip').ZipIterator(stream);
               var plugin;
-              while(true){
-                try{
+              for(var entry in entryGenerator){
                 var pluginJSONObj='';
-                var entry = entryGenerator.next();
                 var pluginStream = new io.TextStream(entry);
                 var line = null;
                 while(line !== ''){
@@ -36,6 +35,7 @@ exports.action = require('action').action({
                   plugin['lastModified'] = new Date();
                   plugin['name'] = pluginJSONObj['name'];
                   plugin['email'] = pluginJSONObj['email'];
+                  plugin['hook'] = pluginJSONObj['hook'];
                   plugin['author'] = pluginJSONObj['author'];
                   plugin['version'] = pluginJSONObj['version'];
                   plugin['type'] = 'GDS';
@@ -44,12 +44,9 @@ exports.action = require('action').action({
                 if(entry['name']=='plugin.js') {
                   plugin['code'] = pluginJSONObj;
                 }
-                } catch(e) {
-                  print('catch '+e);
-                  break;
-                }
               }
               var validationCode = bizplugin.savePlugin(plugin);
+              pluginManager.addPlugin(plugin);
               if(validationCode){
                   return {
                       status: 'redirect',

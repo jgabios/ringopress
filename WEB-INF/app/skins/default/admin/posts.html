@@ -10,7 +10,7 @@ Posts
 
 <% subskin 'postskin' %>
 <div class="post">
-    <a href="/post/<% post.url %>" target="_blank"><% post.title %></a> [<% post.getCommentsCountText() %>] | <a href="/admin/?id=<% post._id %>">delete</a>  | <a href="/admin/edit?id=<% post._id %>">edit</a>
+    <a href="/post/<% post.url %>" target="_blank"><% post.title %></a> [<% post.getCommentsCountText() %>] | <a href="/admin/posts/?id=<% post._id %>">delete</a>  | <a href="/admin/edit?id=<% post._id %>">edit</a>
 </div>
 
 <% subskin 'nextButton' %>

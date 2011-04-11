@@ -1,6 +1,6 @@
 var CONSTANTS = require('constants');
 var bizplugin = require('biz/plugin.js').admin;
-var pluginManager = require('pluginManager').manager;
+var pluginManager = require('pluginManager');
 
 exports.action = require('action').action({
     "skin": "admin/plugins.html",
@@ -15,6 +15,7 @@ exports.action = require('action').action({
             }
             if(action.indexOf('delete')!=-1) {
               var plugin = bizplugin.getPluginById(env.req.params['id']);
+              delete pluginManager.plugins[plugin.name];
               plugin.remove();
             }
         }

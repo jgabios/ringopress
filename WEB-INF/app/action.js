@@ -14,7 +14,7 @@ var HTMLParser = require("htmlparser").HTMLParser;
 
 var settings = {
     "themeFolder": "skins/"+CONSTANTS.THEME_FOLDER+"/",
-    "pluginManager": require('pluginManager').manager
+    "pluginManager": require('pluginManager')
 }
 
 var defaultContext = {

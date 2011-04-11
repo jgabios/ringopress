@@ -9,3 +9,4 @@ exports.BLOG_TITLE = BLOG_NAME + ' - ' + BLOG_DESCRIPTION;
 exports.POSTS_PER_PAGE = 5;
 exports.THEME_FOLDER = 'default'
 exports.FEED_MAXNUMBER_POSTS = 10;
+exports.PLUGIN_DEFAULT_FOLDER = 'plugins/';

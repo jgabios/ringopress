@@ -1,1 +1,1 @@
-require('pluginManager');
+require('pluginManager').initPlugins();
