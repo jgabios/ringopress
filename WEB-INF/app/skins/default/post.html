@@ -46,7 +46,7 @@
 
 <% subskin 'commentskin' %>
 <div class="comment">
-<img class="righty" src="http://www.gravatar.com/avatar/<%comment.getGravatarHash()%>"/>
+<img class="righty" src="http://www.gravatar.com/avatar/<%comment.gravatarHash%>"/>
     <% if <% comment.website %> render 'commentAuthorWithWebsite' %>
     <% if not <% comment.website %> render 'commentAuthorWithoutWebsite' %>
    <div class="commentText">

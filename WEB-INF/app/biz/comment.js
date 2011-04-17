@@ -1,9 +1,19 @@
+
+/**
+ * @fileOverview functions involved in handling comments
+ * creating, querying, deleting, modifying.
+ *
+ */
 var ringoString = require('ringo/utils/strings');
 var model = require('model');
 var CONSTANTS = require('constants');
 
-var getCommentGravatarHash = function(comment){
-    return ringoString.digest(comment.email.replace(/^\s+|\s+$/g, '').toLowerCase());
+/**
+ * Retrieves the gravatar hash of the comment's author
+ * by using his email
+ */
+var getCommentGravatarHash = function(email){
+    return ringoString.digest(email.replace(/^\s+|\s+$/g, '').toLowerCase());
 }
 
 var createNewComment = function(){
@@ -22,7 +32,11 @@ var createNewCommentFromRequestParams = function(params){
 }
 
 var getCommentsByPostId = function(postId){
-    return model.Comment.query().equals('postid',postId).equals('spam',false).orderBy('createTime','desc').select();
+    var comments = model.Comment.query().equals('postid',postId).equals('spam',false).orderBy('createTime','desc').select();
+    for(var i=0;i<comments.length;i++){
+      comments[i].gravatarHash = getCommentGravatarHash(comments[i].email);
+    }
+    return comments;
 }
 
 var getCommentById = function(id){
