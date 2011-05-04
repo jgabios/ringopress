@@ -1,3 +1,7 @@
+/**
+ * @fileOverview Here we have all our ringojs configuration directives
+ * 
+ */
 exports.httpConfig = {
     staticDir: 'static'
 };

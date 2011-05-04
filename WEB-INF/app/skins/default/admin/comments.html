@@ -1,7 +1,7 @@
 <% extends ./base.html %>
 
 <% subskin content %>
-Comments
+<h1> Comments </h1>
 <% for comment in <% comments %> render 'commentskin' %>
 
 <div class="nav"><% if <% showPrevious %> render 'previousButton' %> <% if <% showNext %> render 'nextButton' %></div>

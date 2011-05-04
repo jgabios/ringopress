@@ -1,7 +1,7 @@
 <% extends ./base.html %>
 
 <% subskin content %>
-Plugins <a href="/admin/addplugin">Add a new plugin</a>
+<div><h1 class="lefty" style="width: 70%"> Plugins </h1> <div class="righty"><a href="/admin/addplugin">Add a new plugin</a></div><div class="clearer"></div></div>
 <% for plugin in <% plugins %> render 'pluginskin' %>
 
 <% subskin 'pluginskin' %>

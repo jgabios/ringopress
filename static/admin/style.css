@@ -13,12 +13,37 @@ html, body {
     border: 1px solid #CCC;
     color: #111;
     font-size: 14px;
+    min-height: 700px;
+    box-shadow: 2px 2px 4px rgba(4, 4, 4, 0.6);
 }
 
 
 #content {
     margin: 10px;
-    padding: 10px 45px;
+    padding: 3px 10px 45px 10px;
+    width: 75%;
+    min-height: 650px;
+}
+#content h1 {
+    margin: 0px 0px 10px 5px;
+    padding: 2px;
+    border-bottom: solid 1px #000;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+#menubar {
+    width: 10%;
+}
+
+#menubar ul {
+    list-style: none;
+}
+
+#menubar ul li {
+    border-bottom: solid 1px #f1f1f1;
+    height: 30px;
+    margin-bottom: 8px;
 }
 
 .post {
@@ -60,23 +85,23 @@ background-color: #89C2DF;
 
 #post h1 span{
     color: #000;
-    font-size: 24x;
+    font-size: 24px;
 }
 
 .clearer {
     clear: both;
 }
 
-.menulink {
+a.menulink {
     text-decoration: none;
     color: #333;
 }
 
-.menulink:visited {
+a.menulink:visited {
     color: #333;
 }
 
-.menulink:hover {
+a.menulink:hover {
     color: #000;
 }
 
@@ -122,16 +147,15 @@ hr {
 a {
     text-decoration: none;
     font-size: 15px;
-    color: #00F;
+    color: #1384ec;
 }
 
 a:hover {
-    color: #000;
-    text-decoration: underline;
+    color: #FF0000;
 }
 
 a:visited {
-    color: #00F;
+ color: #3595ff;
 }
 
 a.commentsTitle {

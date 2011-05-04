@@ -11,12 +11,19 @@ var Skin = require('ringo/skin');
 var CONSTANTS = require('constants');
 var ObjectUtil = require('ringo/utils/objects');
 var HTMLParser = require("htmlparser").HTMLParser;
-
+/**
+ * settings is a variable used in any action that needs access to global constants
+ * for now, we hold in it the pluginManager and the themeFolder
+ */
 var settings = {
     "themeFolder": "skins/"+CONSTANTS.THEME_FOLDER+"/",
     "pluginManager": require('pluginManager')
 }
 
+/**
+ * defaultContext is a variable that produces a context for all skins
+ * used in ringopress. All common variables that are present in all pages go here.
+ */
 var defaultContext = {
     page: {
         title: CONSTANTS.BLOG_TITLE
@@ -62,8 +69,11 @@ exports.action = function(config){
                 return Response.redirect(context.url);
             }
         }
+	// this is for RSS feed page
         if(env.resp.contentType==='text/xml'){
             // do the same as below but with a XMLParser
+	    // ---- right now, there is a problem with the HTMLParser used. we cannot use it to modify the dom and recnstruct it later
+	    // maybe I will change it; we'll see
             env.resp.write(html);
             return resp;
         }

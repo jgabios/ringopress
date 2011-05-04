@@ -1,8 +1,8 @@
 <% extends ./base.html %>
 
 <% subskin content %>
-Add new post:  <a href="/admin/create">create</a><br/>
-Posts
+<div><h1 class="lefty" style="width: 80%">Posts</h1><div class="righty"><a href="/admin/create">Add new post</a></div><div class="clearer"></div></div>
+
 <% for post in <% posts %> render 'postskin' %>
 
 <div class="nav"><% if <% showPrevious %> render 'previousButton' %> <% if <% showNext %> render 'nextButton' %></div>

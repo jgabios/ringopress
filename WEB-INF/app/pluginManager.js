@@ -1,3 +1,14 @@
+/**
+ * @fileOverview pluginManager contains functions and methods to handle the plugins.
+ * we have 2 types of plugins: render plugins, executed when a certain page is requested,
+ * and it usually modifies the DOM of the page that goes to the user. This type of plugins
+ * must implement a render function that gets called before the page goes to the client.
+ * The other type of plugin hooks into a biz layer method [createNewPost, getCommentsCount()]
+ * and implements 2 methods: a beforeMethodCall and afterMethodCall.these 2 methods are called by
+ * the pluginManager as their name says, before and after the biz method is called.
+ *
+ */
+
 var fs = require('fs');
 var stringUtils = require('ringo/utils/strings');
 var bizplugin = require('biz/plugin.js').admin;
