@@ -11,15 +11,26 @@ var CONSTANTS = require('constants');
 /**
  * Retrieves the gravatar hash of the comment's author
  * by using his email
+ * @param email {String} the user's email
+ * @return {String} the md5 hash of the email
  */
 var getCommentGravatarHash = function(email){
     return ringoString.digest(email.replace(/^\s+|\s+$/g, '').toLowerCase());
 }
 
+/**
+ * Creates a new empty comment object
+ * @return {Comment}
+ */
 var createNewComment = function(){
     return new model.Comment();
 }
 
+/**
+ * Creates a new comment object from a param object taken from the http request
+ * @param params {Array} 
+ * @return {Comment}
+ */
 var createNewCommentFromRequestParams = function(params){
     var comment = createNewComment();
     comment['author'] = params['author'];
