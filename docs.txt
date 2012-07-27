@@ -1,0 +1,107 @@
+Ringopress - dev docs
+
+dependencies: it runs on google app engine [GAE] , java version.
+it uses ringojs [http://ringojs.org/] version 0.7 for the moment.
+it also makes use of 3 ringojs packages:
+akismet, appenginejs [https://github.com/gmosx/appengine] , htmlparser.
+Ringojs and the 3 packages are included in the github ringopress repo, so no need to take it from their sources.
+One can find the packages in WEB-INF/packages.
+
+The whole app is configured from WEB-INF/app/config.js.
+the relevant sections are:
+
+exports.urls = [
+    ['/admin','adminactions'],
+    ['/', 'actions']
+];
+
+so all url paths of the form http://www.mydomain.com/admin/my-pretty-page will be served by a function named my-pretty-page in the WEB-INF/app/adminactions.js file.
+http://www.mydomain.com/my-public-page will be handled by my-public-page function in the WEB-INF/app/actions.js file.
+
+exports.store = require('ringo/storage/googlestore');
+
+this line says what underlying storage driver should the ringojs store API use.
+
+A little bit about WEB-INF/app/boot.js. this one gets called when the servlet container starts.
+see WEB-INF/web.xml and there this section:
+
+        <init-param>
+            <param-name>bootscript</param-name>
+            <param-value>WEB-INF/app/boot.js</param-value>
+        </init-param>
+Right now, all I do is to initialize the plugins [which i will cover later].
+
+Next in line is the model of the application, present here: WEB-INF/app/model.js
+There are 3 entities: Post, Comment and PostCounter. In ringojs0.7 there was a store API , now in 0.8 it is gone, I guess it is a separate package and you have to 
+install that package from somewhere else.
+
+WEB-INF/app/constants.js is self explanatory.
+
+============================================================
+MAIN SECTION [all files here can be found in WEB-INF/app folder]
+============================================================
+
+As I said above, the functions in actions.js and adminactions.js handle the GET and POST requests.
+actionManager.js finds all files in a folder, "require"s them , gets the function "action" and adds it to the "exports" variable under a key which is the filename
+where the action function resides.
+
+so the line :
+
+exports = require('actionManager.js').getActions(['index','post','contact','feed','importWordpress'],'actions/');
+
+will produce something like this:
+
+exports = {
+ index: function(){
+
+    },
+ post: function() {
+
+ },
+ ...
+}
+
+Similar thing will be done in adminactions.js .
+
+Every file that contains a url path handler ["actions"] have some functionality in common which is extracted in action.js file.
+A concrete action file , only have to produce the context as a json object, and to name the skin/template file, the rest is done in action.js file.
+
+If you look at actions/index.js file, what we do is require('action') inside our module, and then call its action function with an object with 2 keys:
+skin, which is the name of the html template, and
+getContext, which is a function that produces the context needed to render the template/skin.
+
+All other "action" files, url path handlers, are similar.
+they call the action method of action.js file with a JSON object made up of 2 keys, skin and getContext.
+
+All that we have to cover in this section is action function inside action.js file.
+
+First, we define some settings variables needed by all actions [ex: the folder where to find the skins].
+the action method return a function in the ringojs0.7 format that can handle the request:
+
+function(req,url){
+ // body
+}
+
+i get the skin and context function from the config parameter and produce the Response object.
+what it also does is call the plugin functions related to the current url path.
+
+to understand the plugin system you can take a look at the plugins/savepostplugin.js which i made to exemplify how it works.
+it is very easy to understand:
+in the exports look at the "hook" key. this means that when savePost method in the biz/post.js is called , the plugin system will call automatically:
+workBefore and workAfter functions in the plugin object.
+
+so, if anyone wants to create a plugin for ringopress, all it has to do mainly is to define workBefore and/or workAfter functions
+and a hook, which is a method in the biz layer.
+
+The biz layer is just a bunch of functions that help me with the plugin system, but also makes me write less code in the "actions" files.
+
+=================
+quick steps to make it run on your machine:
+1. download gae for java from here: https://developers.google.com/appengine/downloads#Google_App_Engine_SDK_for_Java
+2. unzipp it , and remember the path where you have it.
+3. git clone git://github.com/jgabios/ringopress.git
+4. cd ringopress
+5. PATH_TO_APPENGINE/bin/dev_appserver.sh ./
+6. in your browser go to http://127.0.0.1:8080 and see ringopress
+7. if you want to add posts: http://127.0.0.1:8080/admin/ and sign in as administrator.
+=================
